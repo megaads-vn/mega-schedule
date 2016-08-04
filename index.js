@@ -21,7 +21,6 @@ var scheduleList = require('./schedule');
 for (var i = 0; i < scheduleList.length; i++) {
     var scheduleInfo = scheduleList[i];
     schedule.scheduleJob(scheduleInfo.rule, function (scheduleInfo) {
-        console.log(scheduleInfo.url);
         requestUrl(scheduleInfo.url);
     }.bind(null, scheduleInfo));
 }
@@ -36,12 +35,7 @@ function requestUrl(url) {
         maxRedirects: 3
     };
     request(requestParams, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            var info = JSON.parse(body);
-            console.log(info);
-        }
         writeLog(requestParams.uri, response.statusCode, body, error);
-
     });
 }
 
