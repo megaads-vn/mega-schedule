@@ -12,18 +12,19 @@
  │    └──────────────────── minute (0 - 59)
  └───────────────────────── second (0 - 59, OPTIONAL)
  */
+console.log('Start cron');
 process.env.TZ = 'Asia/Ho_Chi_Minh';
 var schedule = require('node-schedule');
 var request = require('request');
 var fs = require('fs');
 var scheduleList = require('./schedule');
 
-for (var i = 0; i < scheduleList.length; i++) {
-    var scheduleInfo = scheduleList[i];
-    schedule.scheduleJob(scheduleInfo.rule, function (scheduleInfo) {
-        requestUrl(scheduleInfo.url);
-    }.bind(null, scheduleInfo));
-}
+// for (var i = 0; i < scheduleList.length; i++) {
+//     var scheduleInfo = scheduleList[i];
+//     schedule.scheduleJob(scheduleInfo.rule, function (scheduleInfo) {
+//         requestUrl(scheduleInfo.url);
+//     }.bind(null, scheduleInfo));
+// }
 
 function requestUrl(url) {
     var requestParams = {
@@ -51,3 +52,10 @@ function writeLog(url, status, body, err) {
     content += '\n';
     fs.appendFile('./log.txt', content, 'utf8');
 }
+
+fs.watch('./schedule.js', {encoding: 'buffer'}, function(eventType, filename)  {
+    if (filename){
+        console.log('Stop cron');
+        process.exit();
+    }
+});
