@@ -1,0 +1,19 @@
+{
+  "name": "megachedule",
+  "version": "1.0.0",
+  "description": "schedule automatic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "megaads",
+    "schedule"
+  ],
+  "author": "megaads",
+  "license": "ISC",
+  "dependencies": {
+    "node-schedule": "^1.1.1",
+    "request": "^2.74.0"
+  }
+}
