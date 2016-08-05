@@ -19,12 +19,12 @@ var request = require('request');
 var fs = require('fs');
 var scheduleList = require('./schedule');
 
-// for (var i = 0; i < scheduleList.length; i++) {
-//     var scheduleInfo = scheduleList[i];
-//     schedule.scheduleJob(scheduleInfo.rule, function (scheduleInfo) {
-//         requestUrl(scheduleInfo.url);
-//     }.bind(null, scheduleInfo));
-// }
+for (var i = 0; i < scheduleList.length; i++) {
+    var scheduleInfo = scheduleList[i];
+    schedule.scheduleJob(scheduleInfo.rule, function (scheduleInfo) {
+        requestUrl(scheduleInfo.url);
+    }.bind(null, scheduleInfo));
+}
 
 function requestUrl(url) {
     var requestParams = {
@@ -50,10 +50,10 @@ function writeLog(url, status, body, err) {
         content += '\nError: ' + err;
     }
     content += '\n';
-    fs.appendFile('./log.txt', content, 'utf8');
+    fs.appendFile(__dirname + '/log.txt', content, 'utf8');
 }
 
-fs.watch('./schedule.js', {encoding: 'buffer'}, function(eventType, filename)  {
+fs.watch(__dirname +'/schedule.js', {encoding: 'buffer'}, function(eventType, filename)  {
     if (filename){
         console.log('Stop cron');
         process.exit();
