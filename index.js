@@ -21,12 +21,6 @@ var logger = new Megalogger({
     apiKey: "xHRuorBsKn",
     source: "mega-scheduler"
 });
-logger.log({
-    url: "url",
-    time: new Date(),
-    status: "status",
-    body: "body"
-}, "info");
 var request = require('request');
 var fs = require('fs');
 var scheduleList = require('./' + SCHEDULE_CONFIG_FILE);
