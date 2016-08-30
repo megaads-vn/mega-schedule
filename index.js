@@ -19,7 +19,7 @@ var schedule = require('node-schedule');
 var Megalogger = require('megalogger');
 var logger = new Megalogger({
     apiKey: "xHRuorBsKn",
-    source: "mega-scheduler"
+    source: "MegaScheduler"
 });
 var request = require('request');
 var fs = require('fs');
