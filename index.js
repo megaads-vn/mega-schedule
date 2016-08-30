@@ -14,6 +14,7 @@
  */
 console.log('Start cron');
 process.env.TZ = 'Asia/Ho_Chi_Minh';
+var SCHEDULE_CONFIG_FILE = "schedule-cfg";
 var schedule = require('node-schedule');
 var Megalogger = require('megalogger');
 var logger = new Megalogger({
@@ -21,14 +22,14 @@ var logger = new Megalogger({
     source: "mega-scheduler"
 });
 logger.log({
-        url: "url",
-        time: new Date(),
-        status: "status",
-        body: "body"
-    }, "info");
+    url: "url",
+    time: new Date(),
+    status: "status",
+    body: "body"
+}, "info");
 var request = require('request');
 var fs = require('fs');
-var scheduleList = require('./schedule-cfg');
+var scheduleList = require('./' + SCHEDULE_CONFIG_FILE);
 
 for (var i = 0; i < scheduleList.length; i++) {
     var scheduleInfo = scheduleList[i];
@@ -70,7 +71,7 @@ function writeLog(url, status, body, err) {
     }, "info");
 }
 
-fs.watch(__dirname + '/schedule.js', {encoding: 'buffer'}, function (eventType, filename) {
+fs.watch(__dirname + '/' + SCHEDULE_CONFIG_FILE + '.js', {encoding: 'buffer'}, function (eventType, filename) {
     if (filename) {
         console.log('Stop cron');
         process.exit();
