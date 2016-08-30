@@ -28,7 +28,7 @@ logger.log({
     }, "info");
 var request = require('request');
 var fs = require('fs');
-var scheduleList = require('./schedule');
+var scheduleList = require('./schedule-cfg');
 
 for (var i = 0; i < scheduleList.length; i++) {
     var scheduleInfo = scheduleList[i];
