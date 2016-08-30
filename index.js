@@ -15,6 +15,11 @@
 console.log('Start cron');
 process.env.TZ = 'Asia/Ho_Chi_Minh';
 var schedule = require('node-schedule');
+var Megalogger = require('megalogger');
+var logger = new Megalogger({
+    apiKey: "xHRuorBsKn12",
+    source: "mega-scheduler"
+});
 var request = require('request');
 var fs = require('fs');
 var scheduleList = require('./schedule');
@@ -51,10 +56,16 @@ function writeLog(url, status, body, err) {
     }
     content += '\n';
     fs.appendFile(__dirname + '/log.txt', content, 'utf8');
+    logger.log({
+        url: url,
+        time: new Date(),
+        status: status,
+        body: body
+    }, "info");
 }
 
-fs.watch(__dirname +'/schedule.js', {encoding: 'buffer'}, function(eventType, filename)  {
-    if (filename){
+fs.watch(__dirname + '/schedule.js', {encoding: 'buffer'}, function (eventType, filename) {
+    if (filename) {
         console.log('Stop cron');
         process.exit();
     }
