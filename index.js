@@ -17,9 +17,15 @@ process.env.TZ = 'Asia/Ho_Chi_Minh';
 var schedule = require('node-schedule');
 var Megalogger = require('megalogger');
 var logger = new Megalogger({
-    apiKey: "xHRuorBsKn12",
+    apiKey: "xHRuorBsKn",
     source: "mega-scheduler"
 });
+logger.log({
+        url: "url",
+        time: new Date(),
+        status: "status",
+        body: "body"
+    }, "info");
 var request = require('request');
 var fs = require('fs');
 var scheduleList = require('./schedule');
