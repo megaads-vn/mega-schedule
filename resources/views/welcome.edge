@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Mega Schedule</title>
+  <link rel="shortcut icon" href="{{ assetsUrl('images/schedule.png') }}">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ assetsUrl('images/schedule.png') }}">
+  {{ style('css/style') }}
+</head>
+<body>
+  <section>
+    <form action="{{ route('authenticate') }}" method="POST">
+      <div class="iput-wrap">
+        @if(status)
+        <input type="password" class="input-txt" name="token" placeholder="{{ status }}" required />
+        @else
+        <input type="password" class="input-txt" name="token" required autofocus />
+        @endif
+        {{ csrfField() }}
+        <button type="submit" class="button-txt">Unlock</button>
+      </div>
+    </form>
+    <div class="subtitle"><p>Enter a token to access the Mega Schedule...</p></div>
+  </section>
+</body>
+</html>

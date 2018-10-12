@@ -1,0 +1,43 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="formLog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">View Logs - [{titleLog}]</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive" style="max-height:400px;overflow-y:scroll">
+                        <table class="table table-hover table-bordered no-margin-bottom">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center vertical-align">Index</th>
+                                    <th class="col-md-2 text-center vertical-align">Time</th>
+                                    <th class="col-md-9 text-center vertical-align">Log</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in logs track by $index">
+                                    <td class="text-center vertical-align">[{$index + 1}]</td>
+                                    <td class="vertical-align text-center">
+                                        <label class="label label-default block-item">[{summarizeDateTime(item.created_at, true)}]</label>
+                                        <label class="label label-default block-item">[{summarizeDateTime(item.updated_at, true)}]</label>
+                                    </td>
+                                    <td><p class="f-s-12" ng-bind-html="item.log"></p></td>
+                                </tr>
+                                <tr ng-show="logs.length == 0">
+                                    <td colspan="3">No data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

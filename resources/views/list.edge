@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>List - Mega Schedule</title>
+    <link rel="shortcut icon" href="{{ assetsUrl('images/schedule.png') }}">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ assetsUrl('images/schedule.png') }}">
+    {{ style('css/bootstrap.min.css') }}
+    {{ style('css/bootstrap-theme.min.css') }}
+    {{ style('css/custom.css') }}
+</head>
+<body ng-app="MegaSchedule">
+    <div class="container-fuild" ng-controller="ScheduleController">
+        <div class="row" style="margin:15px 0px" ng-cloak>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span class="glyphicon glyphicon-time"></span>
+                            <span class="title-store">&nbsp;List Schedule</span>
+                            </span>
+                        </h3>
+                        <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                    <div class="panel-body">
+                        @include('filter')
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered no-margin-bottom">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-1 text-center vertical-align">Index</th>
+                                        <th class="col-md-3 text-center vertical-align">Time</th>
+                                        <th class="col-md-4 text-center vertical-align">URL / Command</th>
+                                        <th class="col-md-2 text-center vertical-align">Create | Update</th>
+                                        <th class="col-md-2 text-center vertical-align">
+                                            <button type="button" class="btn btn-sm btn-primary" ng-click="showForm()">
+                                                <span class="glyphicon glyphicon-plus"></span> Add New
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in schedules track by $index">
+                                        <td class="vertical-align text-center">[{$index + 1}]</td>
+                                        <td class="vertical-align">[{item.run_at}]</td>
+                                        <td class="vertical-align">
+                                            <a href="[{item.url}]" target="_blank">[{item.url}]</a>
+                                        </td>
+                                        <td class="vertical-align text-center">
+                                            <label class="label label-default block-item">[{summarizeDateTime(item.created_at, true)}]</label>
+                                            <label class="label label-default block-item">[{summarizeDateTime(item.updated_at, true)}]</label>
+                                        </td>
+                                        <td class="vertical-align text-center">
+                                            <button type="button" class="btn btn-sm btn-warning" ng-click="log(item)" title="Log Item">
+                                                <span class="glyphicon glyphicon-list-alt"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-success" ng-click="edit(item)" title="Edit Item">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger" ng-click="delete(item)" title="Delete Item">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="schedules.length == 0">
+                                        <td colspan="5">No data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            @!component('pagination', accessPageId = "pageId", accessPagesCount = "pagesCount", accessFind = "find()" )
+                        </div>
+                        @include('form')
+                        @include('log')
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ script('/js/jquery.min.js') }}
+    {{ script('/js/bootstrap.min.js') }}
+    {{ script('/js/angular.min.js') }}
+    {{ script('/js/angular-sanitize.min.js') }}
+    {{ script('/js/script.js') }}
+    <div class="loading" style="display: none">
+        <div class="cssload-loading"><i></i><i></i><i></i><i></i></div>
+    </div>
+</body>
+</html>
