@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <label>Seconds</label>
                         <select class="form-control" ng-model="schedule.seconds" ng-change="buildTime()" ng-disabled="customBox">
-                            <option value="*">0</option>
+                            <option value="*">Every Second</option>
                             @each(item in seconds)
                                 <option value="{{item}}">{{item}}</option>
                             @endeach

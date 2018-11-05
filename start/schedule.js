@@ -53,24 +53,31 @@ class Schedule {
             maxRedirects: 3
         };
         request(requestParams, function (error, response, body) {
-          self.writeLog(scheduleId, response.statusCode, body, error);
+          self.writeLog(scheduleId, response, body, error);
         });
     }
 
     writeLog(scheduleId, response, body, err) {
-        if(typeof(response.statusCode) != 'undefined' && response.statusCode != '' && response.statusCode != null) {
-            var content = '+ Status: ' + status;
-        } else {
-            var content = '';
+        if(typeof(response) != 'undefined' && response != null) {
+            if(typeof(response.statusCode) != 'undefined' && response.statusCode != '' && response.statusCode != null) {
+                var content = '+ Status: ' + response.statusCode;
+            } else {
+                var content = '';
+            }
+            var contentTypes = response.headers['content-type'].split(';');
+            if (contentTypes.indexOf('application/json') > -1) {
+                content += '<br />+ Body: ' + body;
+            }
+
+            if (err) {
+                content += '<br >+ Error: ' + err;
+            }
+            const logObj = new LogSchedule();
+            logObj.schedule_id = scheduleId;
+            logObj.log = content;
+            logObj.save();
         }
-        content += '<br />+ Body: ' + body;
-        if (err) {
-            content += '<br >+ Error: ' + err;
-        }
-        const logObj = new LogSchedule();
-        logObj.schedule_id = scheduleId;
-        logObj.log = content;
-        logObj.save();
+
     }
 
 }

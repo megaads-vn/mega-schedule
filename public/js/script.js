@@ -25,14 +25,14 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
 }).controller('ScheduleController', function ($scope, $timeout, $http) {
     $scope.pageId = 0;
     $scope.pageSize = 20; $scope.title = "New Schedule"; $scope.titleLog = null;
-    $scope.schedules = []; $scope.filter = {}; $scope.logs = [];
+    $scope.schedules = []; $scope.filter = {}; $scope.logs = []; const STAR = '*';
     var defaultValue = {
-        seconds: '*',
-        minutes: '*',
-        hours: '*',
-        days: '*',
-        months: '*',
-        weekday: '*'
+        seconds: STAR,
+        minutes: STAR,
+        hours: STAR,
+        days: STAR,
+        months: STAR,
+        weekday: STAR
     };
     $scope.schedule = defaultValue; $scope.customBox = false;
 
@@ -122,36 +122,51 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     }
 
     $scope.buildTime = function (isReturn) {
-        var retVal = [];
-        if(typeof($scope.schedule.seconds) != 'undefined' && $scope.schedule.seconds != '' && $scope.schedule.seconds != null) {
+        var retVal = []; var checkPush = 0;
+        if (typeof ($scope.schedule.seconds) != 'undefined' && $scope.schedule.seconds != '' && $scope.schedule.seconds != null && $scope.schedule.seconds != STAR) {
+            checkPush++;
             retVal.push($scope.schedule.seconds);
-        } else {
-            retVal.push('*');
         }
-        if(typeof($scope.schedule.minutes) != 'undefined' && $scope.schedule.minutes != '' && $scope.schedule.minutes != null) {
+
+        if (typeof ($scope.schedule.minutes) != 'undefined' && $scope.schedule.minutes != '' && $scope.schedule.minutes != null) {
+            checkPush++;
             retVal.push($scope.schedule.minutes);
         } else {
-            retVal.push('*');
+            if (checkPush > 0) {
+                retVal.push(STAR);
+            }
         }
-        if(typeof($scope.schedule.hours) != 'undefined' && $scope.schedule.hours != '' && $scope.schedule.hours != null) {
+        if (typeof ($scope.schedule.hours) != 'undefined' && $scope.schedule.hours != '' && $scope.schedule.hours != null) {
+            checkPush++;
             retVal.push($scope.schedule.hours);
         } else {
-            retVal.push('*');
+            if (checkPush > 0) {
+                retVal.push(STAR);
+            }
         }
-        if(typeof($scope.schedule.days) != 'undefined' && $scope.schedule.days != '' && $scope.schedule.days != null) {
+        if (typeof ($scope.schedule.days) != 'undefined' && $scope.schedule.days != '' && $scope.schedule.days != null) {
+            checkPush++;
             retVal.push($scope.schedule.days);
         } else {
-            retVal.push('*');
+            if (checkPush > 0) {
+                retVal.push(STAR);
+            }
         }
-        if(typeof($scope.schedule.months) != 'undefined' && $scope.schedule.months != '' && $scope.schedule.months != null) {
+        if (typeof ($scope.schedule.months) != 'undefined' && $scope.schedule.months != '' && $scope.schedule.months != null) {
+            checkPush++;
             retVal.push($scope.schedule.months);
         } else {
-            retVal.push('*');
+            if (checkPush > 0) {
+                retVal.push(STAR);
+            }
         }
-        if(typeof($scope.schedule.weekday) != 'undefined' && $scope.schedule.weekday != '' && $scope.schedule.weekday != null) {
+        if (typeof ($scope.schedule.weekday) != 'undefined' && $scope.schedule.weekday != '' && $scope.schedule.weekday != null) {
+            checkPush++;
             retVal.push($scope.schedule.weekday);
         } else {
-            retVal.push('*');
+            if (checkPush > 0) {
+                retVal.push(STAR);
+            }
         }
 
         if (isReturn) {
@@ -248,23 +263,29 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         $scope.schedule.time = null;
         $scope.schedule = angular.copy(item);
         var times = item.run_at.split(' ');
+        $scope.schedule.weekday = STAR;
         if (times.length != 0) {
-            $scope.schedule.seconds = times.shift();
+            $scope.schedule.weekday = times.pop();
         }
+        $scope.schedule.months = STAR;
         if (times.length != 0) {
-            $scope.schedule.minutes = times.shift();
+            $scope.schedule.months = times.pop();
         }
+        $scope.schedule.days = STAR;
         if (times.length != 0) {
-            $scope.schedule.hours = times.shift();
+            $scope.schedule.days = times.pop();
         }
+        $scope.schedule.hours = STAR;
         if (times.length != 0) {
-            $scope.schedule.days = times.shift();
+            $scope.schedule.hours = times.pop();
         }
+        $scope.schedule.minutes = STAR;
         if (times.length != 0) {
-            $scope.schedule.months = times.shift();
+            $scope.schedule.minutes = times.pop();
         }
+        $scope.schedule.seconds = STAR;
         if (times.length != 0) {
-            $scope.schedule.weekday = times.shift();
+            $scope.schedule.seconds = times.pop();
         }
         $scope.customBox = false;
         $scope.title = "Edit Schedule";
