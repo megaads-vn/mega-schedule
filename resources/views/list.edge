@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>List - Mega Schedule</title>
     <link rel="shortcut icon" href="{{ assetsUrl('images/schedule.png') }}">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ assetsUrl('images/schedule.png') }}">
@@ -29,8 +31,8 @@
                                 <thead>
                                     <tr>
                                         <th class="col-md-1 text-center vertical-align">Index</th>
-                                        <th class="col-md-3 text-center vertical-align">Time</th>
-                                        <th class="col-md-4 text-center vertical-align">URL / Command</th>
+                                        <th class="col-md-3 text-center vertical-align">Note</th>
+                                        <th class="col-md-4 text-center vertical-align">Time / URL</th>
                                         <th class="col-md-2 text-center vertical-align">Create | Update</th>
                                         <th class="col-md-2 text-center vertical-align">
                                             <button type="button" class="btn btn-sm btn-primary" ng-click="showForm()">
@@ -42,8 +44,9 @@
                                 <tbody>
                                     <tr ng-repeat="item in schedules track by $index">
                                         <td class="vertical-align text-center">[{$index + 1}]</td>
-                                        <td class="vertical-align">[{item.run_at}]</td>
+                                        <td class="vertical-align">[{item.note}]</td>
                                         <td class="vertical-align">
+                                            <p>[{item.run_at}]</p>
                                             <a href="[{item.url}]" target="_blank">[{item.url}]</a>
                                         </td>
                                         <td class="vertical-align text-center">

@@ -72,6 +72,9 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             pageId: $scope.pageId,
             pageSize: $scope.pageSize
         };
+        if(typeof($scope.filter.note) != 'undefined' && $scope.filter.note != '' && $scope.filter.note != null) {
+            retVal.note = $scope.filter.note;
+        }
         if(typeof($scope.filter.link) != 'undefined' && $scope.filter.link != '' && $scope.filter.link != null) {
             retVal.link = $scope.filter.link;
         }

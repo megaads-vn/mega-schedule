@@ -104,8 +104,8 @@ class ScheduleController extends BaseController {
     }
 
     buildFilterData(query, request) {
-        if(typeof(request.input('time')) != 'undefined' && request.input('time') != '' && request.input('time') != null) {
-            query.where('run_at', 'LIKE', '%' + request.input('time') + '%');
+        if(typeof(request.input('note')) != 'undefined' && request.input('note') != '' && request.input('note') != null) {
+            query.where('note', 'LIKE', '%' + request.input('note') + '%');
         }
         if(typeof(request.input('link')) != 'undefined' && request.input('link') != '' && request.input('link') != null) {
             query.where('url', 'LIKE', '%' + request.input('link') + '%');
