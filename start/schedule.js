@@ -4,6 +4,7 @@ const ScheduleData = use('App/Models/Schedule');
 const LogSchedule = use('App/Models/LogSchedule');
 const schedule = require('node-schedule');
 const request = require('request');
+// const Ws = use('Ws');
 
 global.globalSchedule = [];
 
@@ -36,8 +37,12 @@ class Schedule {
 
     create(scheduleInfo) {
         var self = this;
-        globalSchedule[scheduleInfo.id] = schedule.scheduleJob(scheduleInfo.run_at, function (scheduleInfo) {
+        var runAt = scheduleInfo.run_at.trim().replace(/\s\s+/g, ' ');
+        globalSchedule[scheduleInfo.id] = schedule.scheduleJob(runAt, function (scheduleInfo) {
             console.log("Run: " + scheduleInfo.url);
+            // Ws.channel('activitySchedule', ({ socket }) => {
+            //     socket.emit('activitySchedule', scheduleInfo);
+            // });
             self.requestUrl(scheduleInfo.id, scheduleInfo.url);
         }.bind(null, scheduleInfo));
     }
@@ -50,7 +55,7 @@ class Schedule {
               "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
               "Cache-Control": "no-cache, no-store, must-revalidate"
             },
-            maxRedirects: 3
+            maxRedirects: 5
         };
         request(requestParams, function (error, response, body) {
           self.writeLog(scheduleId, response, body, error);

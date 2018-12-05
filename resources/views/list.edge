@@ -14,7 +14,7 @@
 <body ng-app="MegaSchedule">
     <div class="container-fuild" ng-controller="ScheduleController">
         <div class="row" style="margin:15px 0px" ng-cloak>
-            <div class="col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="panel panel-danger">
                     <div class="panel-heading">
                         <h3 class="panel-title">
@@ -79,6 +79,22 @@
                     </div>
                 </div>
             </div>
+
+            <!--<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                            <span class="title-store">&nbsp;Activity Run</span>
+                            </span>
+                        </h3>
+                        <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                    <div class="panel-body">
+
+                    </div>
+                </div>
+            </div> -->
         </div>
     </div>
     {{ script('/js/jquery.min.js') }}
@@ -86,6 +102,12 @@
     {{ script('/js/angular.min.js') }}
     {{ script('/js/angular-sanitize.min.js') }}
     {{ script('/js/script.js') }}
+
+    <!-- for websocket
+    {{ script('/js/polyfill.min.js') }}
+    {{ script('/js/Ws.browser.min.js') }}
+    {{ script('/js/activity.js') }}
+    -->
     <div class="loading" style="display: none">
         <div class="cssload-loading"><i></i><i></i><i></i><i></i></div>
     </div>

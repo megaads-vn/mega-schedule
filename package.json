@@ -27,6 +27,7 @@
     "@adonisjs/lucid": "^5.0.4",
     "@adonisjs/session": "^1.0.25",
     "@adonisjs/shield": "^1.0.8",
+    "@adonisjs/websocket": "^1.0.11",
     "mysql": "^2.16.0",
     "node-schedule": "^1.1.1",
     "request": "^2.74.0"

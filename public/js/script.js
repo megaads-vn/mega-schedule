@@ -39,7 +39,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     $scope.showForm = function () {
         $scope.title = "New Schedule";
         $scope.schedule = {};
-        $scope.schedule = defaultValue;
+        $scope.schedule = angular.copy(defaultValue);
         $scope.schedule.url = null;
         $scope.schedule.time = null;
         $scope.customBox = false;
@@ -48,7 +48,6 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             $('#formSchedule').modal('show');
         });
     }
-
 
     $scope.find = function () {
         $('.loading').show();
@@ -265,7 +264,13 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         $scope.schedule.url = null;
         $scope.schedule.time = null;
         $scope.schedule = angular.copy(item);
-        var times = item.run_at.split(' ');
+        var runTime = item.run_at.trim().replace(/\s\s+/g, ' ');
+        var times = runTime.split(' ');
+        angular.forEach(times, function (item, index) {
+            if (!isNaN(item)) {
+                times[index] = parseInt(item);
+            }
+        });
         $scope.schedule.weekday = STAR;
         if (times.length != 0) {
             $scope.schedule.weekday = times.pop();
@@ -294,6 +299,12 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         $scope.title = "Edit Schedule";
         $scope.buildTime();
         $timeout(function () {
+            $('#weekday').val($scope.schedule.weekday);
+            $('#months').val($scope.schedule.months);
+            $('#days').val($scope.schedule.days);
+            $('#hours').val($scope.schedule.hours);
+            $('#minutes').val($scope.schedule.minutes);
+            $('#seconds').val($scope.schedule.seconds);
             $('.btnSave').button('reset');
             $('#formSchedule').modal('show');
         });

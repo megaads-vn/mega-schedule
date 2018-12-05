@@ -16,8 +16,9 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Seconds</label>
-                        <select class="form-control" ng-model="schedule.seconds" ng-change="buildTime()" ng-disabled="customBox">
+                        <select class="form-control" ng-model="schedule.seconds" ng-change="buildTime()" ng-disabled="customBox" id="seconds">
                             <option value="*">Every Second</option>
+                            <option value="0">0</option>
                             @each(item in seconds)
                                 <option value="{{item}}">{{item}}</option>
                             @endeach
@@ -27,7 +28,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Minutes</label>
-                        <select class="form-control" ng-model="schedule.minutes" ng-change="buildTime()" ng-disabled="customBox">
+                        <select class="form-control" ng-model="schedule.minutes" ng-change="buildTime()" ng-disabled="customBox" id="minutes">
                             <optgroup label="Normal">
                                 <option value="*">Every Minute</option>
                                 <option value="*/2">Even Minutes</option>
@@ -37,6 +38,7 @@
                                 <option value="*/30">Every 30 Minutes</option>
                             </optgroup>
                             <optgroup label="Custom">
+                                <option value="0">0</option>
                                 @each(item in minutes)
                                     <option value="{{item}}">{{item}}</option>
                                 @endeach
@@ -47,7 +49,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Hours</label>
-                        <select class="form-control" ng-model="schedule.hours" ng-change="buildTime()" ng-disabled="customBox">
+                        <select class="form-control" ng-model="schedule.hours" ng-change="buildTime()" ng-disabled="customBox" id="hours">
                             <optgroup label="Normal">
                                 <option value="*">Every Hour</option>
                                 <option value="*/2">Even Hour</option>
@@ -56,6 +58,7 @@
                                 <option value="*/12">Every 12 Hour</option>
                             </optgroup>
                             <optgroup label="Custom">
+                                <option value="0">0</option>
                                 @each(item in hours)
                                     <option value="{{item}}">{{item}}</option>
                                 @endeach
@@ -66,7 +69,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Days</label>
-                        <select class="form-control" ng-model="schedule.days" ng-change="buildTime()" ng-disabled="customBox">
+                        <select class="form-control" ng-model="schedule.days" ng-change="buildTime()" ng-disabled="customBox" id="days">
                             <optgroup label="Normal">
                                 <option value="*">Every Day</option>
                                 <option value="*/2">Even Days</option>
@@ -86,7 +89,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Months</label>
-                        <select class="form-control" ng-model="schedule.months" ng-change="buildTime()" ng-disabled="customBox">
+                        <select class="form-control" ng-model="schedule.months" ng-change="buildTime()" ng-disabled="customBox" id="months">
                             <optgroup label="Normal">
                                 <option value="*">Every Month</option>
                                 <option value="*/2">Even Month</option>
@@ -105,7 +108,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Weekday</label>
-                        <select class="form-control" ng-model="schedule.weekday" ng-change="buildTime()" ng-disabled="customBox">
+                        <select class="form-control" ng-model="schedule.weekday" ng-change="buildTime()" ng-disabled="customBox" id="weekday">
                             <optgroup label="Normal">
                                 <option value="*">Every Weekday</option>
                                 <option value="1-5">Monday-Friday</option>
