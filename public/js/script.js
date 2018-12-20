@@ -43,6 +43,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         $scope.schedule.url = null;
         $scope.schedule.time = null;
         $scope.customBox = false;
+        $scope.buildTime();
         $timeout(function () {
             $('.btnSave').button('reset');
             $('#formSchedule').modal('show');
@@ -238,6 +239,9 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             }
         } else {
             retVal.time = $scope.buildTime(true);
+        }
+        if(typeof($scope.schedule.note) != 'undefined' && $scope.schedule.note != '' && $scope.schedule.note != null) {
+            retVal.note = $scope.schedule.note;
         }
         return retVal;
     }

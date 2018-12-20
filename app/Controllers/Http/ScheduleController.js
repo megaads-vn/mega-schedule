@@ -87,6 +87,10 @@ class ScheduleController extends BaseController {
             schedule.url = data.url;
             schedule.run_at = data.time;
 
+            if(typeof(data.note) != 'undefined' && data.note != '' && data.note != null) {
+                schedule.note = data.note;
+            }
+
             var status = schedule.save();
             status.then(function () {
                 if (mode === 'create') {
