@@ -5,7 +5,8 @@ class ActivityController {
   constructor ({ socket, request }) {
     this.socket = socket;
     this.request = request;
-    console.log("Socket connected as %s.", socket.id);
+    socket.emit('socketId', socket.id);
+    socket.emit('scheduleRun', scheduleRun);
   }
 
   onClientEmit (message) {

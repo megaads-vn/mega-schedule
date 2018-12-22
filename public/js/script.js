@@ -23,9 +23,10 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     $interpolateProvider.startSymbol('[{');
     $interpolateProvider.endSymbol('}]');
 }).controller('ScheduleController', function ($scope, $timeout, $http) {
-    $scope.pageId = 0;
-    $scope.pageSize = 20; $scope.title = "New Schedule"; $scope.titleLog = null;
+
+    $scope.pageId = 0; $scope.pageSize = 20; $scope.title = "New Schedule"; $scope.titleLog = null;
     $scope.schedules = []; $scope.filter = {}; $scope.logs = []; const STAR = '*';
+    $scope.runs = [];
     var defaultValue = {
         seconds: STAR,
         minutes: STAR,
@@ -315,4 +316,39 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     }
 
     $scope.find();
+
+    /* ------------------------- WEB SOCKET ---------------------- */
+    var ws = adonis.Ws().connect();
+
+    ws.on('open', () => {
+        const activity = ws.subscribe('activitySchedule');
+
+        activity.on('socketId', (id) => {
+            console.log('Subscribe Activity Schedule Event as SocketId:', id);
+        });
+
+        activity.on('error', (error) => {
+            console.log("Activity Error", error);
+        });
+
+        activity.on('close', () => {
+            console.log('Unsubscribe Activity Schedule Event...');
+        });
+
+        activity.on('scheduleRun', (data) => {
+            $scope.runs = angular.copy(data);
+            $scope.$apply();
+        });
+    })
+
+    ws.on('error', () => {
+        console.log('Error Connect Web Socket!');
+    });
+
+    ws.on('close', () => {
+        console.log('Disconnect Web Socket!');
+    });
+
 });
+
+

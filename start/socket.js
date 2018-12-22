@@ -13,6 +13,6 @@
 |
 */
 
-const Ws = use('Ws')
+const Ws = use('Ws');
 
 Ws.channel('activitySchedule', 'ActivityController');

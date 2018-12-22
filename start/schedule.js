@@ -4,9 +4,8 @@ const ScheduleData = use('App/Models/Schedule');
 const LogSchedule = use('App/Models/LogSchedule');
 const schedule = require('node-schedule');
 const request = require('request');
-// const Ws = use('Ws');
-
-global.globalSchedule = [];
+const Ws = use('Ws');
+global.globalSchedule = []; global.scheduleRun = [];
 
 class Schedule {
 
@@ -39,10 +38,15 @@ class Schedule {
         var self = this;
         var runAt = scheduleInfo.run_at.trim().replace(/\s\s+/g, ' ');
         globalSchedule[scheduleInfo.id] = schedule.scheduleJob(runAt, function (scheduleInfo) {
-            console.log("Run: " + scheduleInfo.url);
-            // Ws.channel('activitySchedule', ({ socket }) => {
-            //     socket.emit('activitySchedule', scheduleInfo);
-            // });
+            // console.log("Run: " + scheduleInfo.url);
+            if (scheduleRun.length > 10) {
+                scheduleRun.pop();
+            }
+            scheduleRun.unshift({
+                runTime: new Date().getDateTime(),
+                runLink: scheduleInfo.url
+            });
+            Ws.getChannel('activitySchedule').topic('activitySchedule').broadcast('scheduleRun', scheduleRun);
             self.requestUrl(scheduleInfo.id, scheduleInfo.url);
         }.bind(null, scheduleInfo));
     }

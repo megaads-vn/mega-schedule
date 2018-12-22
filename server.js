@@ -21,22 +21,27 @@ const { Ignitor } = require('@adonisjs/ignitor')
 
 process.env.TZ = 'Asia/Ho_Chi_Minh';
 
-// const cluster = require('cluster')
-
-// if (cluster.isMaster) {
-//   for (let i=0; i < 4; i ++) {
-//     cluster.fork()
-//   }
-//   require('@adonisjs/websocket/clusterPubSub')()
-//   return
-// }
-
-
 new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .wsServer()
   .fireHttpServer()
   .catch(console.error);
+
+Date.prototype.getDateTime = (character = ':') => {
+    var date = new Date();
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
+    var min = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
+    var sec = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+    var day = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+    return year + "-" + month + "-" + day + " " + hour + character + min + character + sec;
+}
 
 const schedule = require('./start/schedule');
 schedule.run();
