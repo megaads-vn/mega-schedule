@@ -12,7 +12,7 @@
 }
 
 .block-item {
-    display: inline-block;
+    display: block;
 }
 
 @media (min-width: 768px){

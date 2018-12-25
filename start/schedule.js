@@ -47,7 +47,7 @@ class Schedule {
                 runLink: scheduleInfo.url
             });
             var socket = Ws.getChannel('activitySchedule').topic('activitySchedule');
-            if(typeof(socket.broadcast) != 'undefined') {
+            if(socket) {
                 socket.broadcast('scheduleRun', scheduleRun);
             }
             self.requestUrl(scheduleInfo.id, scheduleInfo.url);
