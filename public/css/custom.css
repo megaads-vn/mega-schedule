@@ -1,3 +1,7 @@
+a {
+    word-break: break-all;
+}
+
 .clickable {
     cursor: pointer;
 }
