@@ -216,3 +216,17 @@ a {
 .f-s-12 {
     font-size: 12px;
 }
+
+.structure-schedule {
+    text-align:center;
+    word-spacing: 15px;
+}
+
+.structure-schedule > span {
+    cursor: pointer;
+}
+
+.structure-schedule > span.active {
+    font-weight: bold;
+    color: #337ab7;
+}

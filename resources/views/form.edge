@@ -1,156 +1,154 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="formSchedule">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">[{title}]</h4>
+            <h4 class="modal-title">[{title}] <span ng-if="descriptions">- [{descriptions}]</span></h4>
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-left">
                     <div class="form-group">
                         <label>URL</label>
                         <input type="text" ng-model="schedule.url" class="form-control" placeholder="Link or Command..." />
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Seconds</label>
-                        <select class="form-control" ng-model="schedule.seconds" ng-change="buildTime()" ng-disabled="customBox" id="seconds">
-                            <option value="*">Every Second</option>
-                            <option value="0">0</option>
-                            @each(item in seconds)
-                                <option value="{{item}}">{{item}}</option>
-                            @endeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Minutes</label>
-                        <select class="form-control" ng-model="schedule.minutes" ng-change="buildTime()" ng-disabled="customBox" id="minutes">
-                            <optgroup label="Normal">
-                                <option value="*">Every Minute</option>
-                                <option value="*/2">Even Minutes</option>
-                                <option value="1-59/2">Odd Minutes</option>
-                                <option value="*/5">Every 5 Minutes</option>
-                                <option value="*/15">Every 15 Minutes</option>
-                                <option value="*/30">Every 30 Minutes</option>
-                            </optgroup>
-                            <optgroup label="Custom">
-                                <option value="0">0</option>
-                                @each(item in minutes)
-                                    <option value="{{item}}">{{item}}</option>
-                                @endeach
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Hours</label>
-                        <select class="form-control" ng-model="schedule.hours" ng-change="buildTime()" ng-disabled="customBox" id="hours">
-                            <optgroup label="Normal">
-                                <option value="*">Every Hour</option>
-                                <option value="*/2">Even Hour</option>
-                                <option value="1-23/2">Odd Hour</option>
-                                <option value="*/6">Every 6 Hour</option>
-                                <option value="*/12">Every 12 Hour</option>
-                            </optgroup>
-                            <optgroup label="Custom">
-                                <option value="0">0</option>
-                                @each(item in hours)
-                                    <option value="{{item}}">{{item}}</option>
-                                @endeach
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Days</label>
-                        <select class="form-control" ng-model="schedule.days" ng-change="buildTime()" ng-disabled="customBox" id="days">
-                            <optgroup label="Normal">
-                                <option value="*">Every Day</option>
-                                <option value="*/2">Even Days</option>
-                                <option value="1-31/2">Odd Days</option>
-                                <option value="*/5">Every 5 Days</option>
-                                <option value="*/10">Every 10 Days</option>
-                                <option value="*/15">Every Half Month</option>
-                            </optgroup>
-                            <optgroup label="Custom">
-                                @each(item in days)
-                                    <option value="{{item}}">{{item}}</option>
-                                @endeach
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Months</label>
-                        <select class="form-control" ng-model="schedule.months" ng-change="buildTime()" ng-disabled="customBox" id="months">
-                            <optgroup label="Normal">
-                                <option value="*">Every Month</option>
-                                <option value="*/2">Even Month</option>
-                                <option value="1-11/2">Odd Month</option>
-                                <option value="*/4">Every 4 Month</option>
-                                <option value="*/6">Every Half Year</option>
-                            </optgroup>
-                            <optgroup label="Custom">
-                                @each(item in months)
-                                    <option value="{{item}}">{{item}}</option>
-                                @endeach
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Weekday</label>
-                        <select class="form-control" ng-model="schedule.weekday" ng-change="buildTime()" ng-disabled="customBox" id="weekday">
-                            <optgroup label="Normal">
-                                <option value="*">Every Weekday</option>
-                                <option value="1-5">Monday-Friday</option>
-                                <option value="0,6">Weekend Days</option>
-                            </optgroup>
-                            <optgroup label="Custom">
-                                <option value="0">Sunday</option>
-                                <option value="1">Monday</option>
-                                <option value="2">Tuesday</option>
-                                <option value="3">Wednesday</option>
-                                <option value="4">Thursday</option>
-                                <option value="5">Friday</option>
-                                <option value="6">Saturday</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label><input type="checkbox" ng-model="customBox" /> Custom Time <a href="javascript:void(0)" id="guide-schedule">(Guide)</a></label>
-                        <input type="text" ng-model="schedule.time" class="form-control" ng-disabled="!customBox" />
-                    </div>
-                </div>
-                <div class="col-md-6">
                     <div class="form-group">
                         <label>Note</label>
                         <input type="text" ng-model="schedule.note" class="form-control" />
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Seconds</label>
+                                <select class="form-control" ng-model="schedule.seconds" ng-change="buildTime()" ng-disabled="customBox" id="seconds">
+                                    <option value="*">Every Second</option>
+                                    <option value="0">0</option>
+                                    @each(item in seconds)
+                                        <option value="{{item}}">{{item}}</option>
+                                    @endeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Minutes</label>
+                                <select class="form-control" ng-model="schedule.minutes" ng-change="buildTime()" ng-disabled="customBox" id="minutes">
+                                    <optgroup label="Normal">
+                                        <option value="*">Every Minute</option>
+                                        <option value="*/2">Even Minutes</option>
+                                        <option value="1-59/2">Odd Minutes</option>
+                                        <option value="*/5">Every 5 Minutes</option>
+                                        <option value="*/15">Every 15 Minutes</option>
+                                        <option value="*/30">Every 30 Minutes</option>
+                                    </optgroup>
+                                    <optgroup label="Custom">
+                                        <option value="0">0</option>
+                                        @each(item in minutes)
+                                            <option value="{{item}}">{{item}}</option>
+                                        @endeach
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Hours</label>
+                                <select class="form-control" ng-model="schedule.hours" ng-change="buildTime()" ng-disabled="customBox" id="hours">
+                                    <optgroup label="Normal">
+                                        <option value="*">Every Hour</option>
+                                        <option value="*/2">Even Hour</option>
+                                        <option value="1-23/2">Odd Hour</option>
+                                        <option value="*/6">Every 6 Hour</option>
+                                        <option value="*/12">Every 12 Hour</option>
+                                    </optgroup>
+                                    <optgroup label="Custom">
+                                        <option value="0">0</option>
+                                        @each(item in hours)
+                                            <option value="{{item}}">{{item}}</option>
+                                        @endeach
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Days</label>
+                                <select class="form-control" ng-model="schedule.days" ng-change="buildTime()" ng-disabled="customBox" id="days">
+                                    <optgroup label="Normal">
+                                        <option value="*">Every Day</option>
+                                        <option value="*/2">Even Days</option>
+                                        <option value="1-31/2">Odd Days</option>
+                                        <option value="*/5">Every 5 Days</option>
+                                        <option value="*/10">Every 10 Days</option>
+                                        <option value="*/15">Every Half Month</option>
+                                    </optgroup>
+                                    <optgroup label="Custom">
+                                        @each(item in days)
+                                            <option value="{{item}}">{{item}}</option>
+                                        @endeach
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Months</label>
+                                <select class="form-control" ng-model="schedule.months" ng-change="buildTime()" ng-disabled="customBox" id="months">
+                                    <optgroup label="Normal">
+                                        <option value="*">Every Month</option>
+                                        <option value="*/2">Even Month</option>
+                                        <option value="1-11/2">Odd Month</option>
+                                        <option value="*/4">Every 4 Month</option>
+                                        <option value="*/6">Every Half Year</option>
+                                    </optgroup>
+                                    <optgroup label="Custom">
+                                        @each(item in months)
+                                            <option value="{{item}}">{{item}}</option>
+                                        @endeach
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Weekday</label>
+                                <select class="form-control" ng-model="schedule.weekday" ng-change="buildTime()" ng-disabled="customBox" id="weekday">
+                                    <optgroup label="Normal">
+                                        <option value="*">Every Weekday</option>
+                                        <option value="1-5">Monday-Friday</option>
+                                        <option value="0,6">Weekend Days</option>
+                                    </optgroup>
+                                    <optgroup label="Custom">
+                                        <option value="0">Sunday</option>
+                                        <option value="1">Monday</option>
+                                        <option value="2">Tuesday</option>
+                                        <option value="3">Wednesday</option>
+                                        <option value="4">Thursday</option>
+                                        <option value="5">Friday</option>
+                                        <option value="6">Saturday</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
-
-                <div id="template" style="display: none;">
-                    <pre class="style-pre">
-*  *  *  *  *  *
-┬  ┬  ┬  ┬  ┬  ┬
-│  │  │  │  │  │ day of week (0 - 6)
-│  │  │  │  │  └ (0 or 7 is Sun)
-│  │  │  │  └─── month (1 - 12)
-│  │  │  └────── day of month (1 - 31)
-│  │  └───────── hour (0 - 23)
-│  └──────────── minute (0 - 59)
-└─────────────── second (0 - 59)
-                    </pre>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-right">
+                    <div class="form-group" id="validate-time">
+                        <label><input type="checkbox" ng-model="customBox" /> Custom Time </label>
+                        <input type="text" ng-model="schedule.time" ng-keyup="changeScheduleTime(schedule.time)" class="form-control" ng-disabled="!customBox" style="text-align:center; word-spacing: 30px;" placeholder="* * * * * *" />
+                    </div>
+                    <div class="structure-schedule">
+                        <span ng-click="hoverRule = 'seconds'" ng-class="hoverRule == 'seconds' ? 'active' : ''">Seconds</span>
+                        <span ng-click="hoverRule = 'minutes'" ng-class="hoverRule == 'minutes' ? 'active' : ''">Minutes</span>
+                        <span ng-click="hoverRule = 'hours'" ng-class="hoverRule == 'hours' ? 'active' : ''">Hours</span>
+                        <span ng-click="hoverRule = 'days'" ng-class="hoverRule == 'days' ? 'active' : ''">Days</span>
+                        <span ng-click="hoverRule = 'months'" ng-class="hoverRule == 'months' ? 'active' : ''">Months</span>
+                        <span ng-click="hoverRule = 'weeks'" ng-class="hoverRule == 'weeks' ? 'active' : ''">Weekday</span>
+                    </div>
+                    <div class="minute-rule" style="margin-top:20px">
+                        @include('rule')
+                    </div>
                 </div>
             </div>
         </div>

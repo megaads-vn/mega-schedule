@@ -90,6 +90,9 @@ class ScheduleController extends BaseController {
             if(typeof(data.note) != 'undefined' && data.note != '' && data.note != null) {
                 schedule.note = data.note;
             }
+            if(typeof(data.customTime) != 'undefined' && data.customTime != '' && data.customTime != null) {
+                schedule.custom_time = data.customTime;
+            }
 
             var status = schedule.save();
             status.then(function () {

@@ -1,3 +1,5 @@
+var cronstrue = window.cronstrue;
+
 $(document).ready(function () {
     $(document).on('click', '.panel-heading span.clickable', function (e) {
         var $this = $(this);
@@ -11,12 +13,6 @@ $(document).ready(function () {
             $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
         }
     });
-
-    $('#guide-schedule').tooltip({
-        placement: 'right',
-        html: true,
-        title: $('#template').html()
-    });
 });
 
 angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
@@ -26,7 +22,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
 
     $scope.pageId = 0; $scope.pageSize = 20; $scope.title = "New Schedule"; $scope.titleLog = null;
     $scope.schedules = []; $scope.filter = {}; $scope.logs = []; const STAR = '*';
-    $scope.runs = [];
+    $scope.runs = []; $scope.hoverRule = 'weeks';
     var defaultValue = {
         seconds: STAR,
         minutes: STAR,
@@ -135,48 +131,38 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         if (typeof ($scope.schedule.minutes) != 'undefined' && $scope.schedule.minutes != '' && $scope.schedule.minutes != null) {
             checkPush++;
             retVal.push($scope.schedule.minutes);
-        } else {
-            if (checkPush > 0) {
-                retVal.push(STAR);
-            }
+        } else if (checkPush > 0) {
+            retVal.push(STAR);
         }
         if (typeof ($scope.schedule.hours) != 'undefined' && $scope.schedule.hours != '' && $scope.schedule.hours != null) {
             checkPush++;
             retVal.push($scope.schedule.hours);
-        } else {
-            if (checkPush > 0) {
-                retVal.push(STAR);
-            }
+        } else if (checkPush > 0) {
+            retVal.push(STAR);
         }
         if (typeof ($scope.schedule.days) != 'undefined' && $scope.schedule.days != '' && $scope.schedule.days != null) {
             checkPush++;
             retVal.push($scope.schedule.days);
-        } else {
-            if (checkPush > 0) {
-                retVal.push(STAR);
-            }
+        } else if (checkPush > 0) {
+            retVal.push(STAR);
         }
         if (typeof ($scope.schedule.months) != 'undefined' && $scope.schedule.months != '' && $scope.schedule.months != null) {
             checkPush++;
             retVal.push($scope.schedule.months);
-        } else {
-            if (checkPush > 0) {
-                retVal.push(STAR);
-            }
+        } else if (checkPush > 0) {
+            retVal.push(STAR);
         }
         if (typeof ($scope.schedule.weekday) != 'undefined' && $scope.schedule.weekday != '' && $scope.schedule.weekday != null) {
             checkPush++;
             retVal.push($scope.schedule.weekday);
-        } else {
-            if (checkPush > 0) {
-                retVal.push(STAR);
-            }
+        } else if (checkPush > 0) {
+            retVal.push(STAR);
         }
 
         if (isReturn) {
             return retVal.join(' ');
         } else {
-            $scope.schedule.time = retVal.join(' ');
+            $scope.showDescriptions(retVal.join(' '));
         }
     }
 
@@ -185,33 +171,22 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         if(data) {
             $('.btnSave').button('loading');
             if (typeof (data.id) != 'undefined' && data.id != '' && data.id != null) {
-                $http.patch('/service/schedule/update/' + data.id, data).then(function successResult(response) {
-                    if (response.data.status == "successful") {
-                        $('#formSchedule').modal('hide');
-                        $scope.find();
-                    } else {
-                        $('.btnSave').button('reset');
-                        alert('An error occurred during data transfer. Please try again...');
-                    }
-                }, function errorResult() {
-                    $('.btnSave').button('reset');
-                    alert('An error occurred during data transfer. Please try again...');
-                });
-
+                var httpRequest = $http.patch('/service/schedule/update/' + data.id, data);
             } else {
-                $http.post('/service/schedule/create', data).then(function successResult(response) {
-                    if (response.data.status == "successful") {
-                        $('#formSchedule').modal('hide');
-                        $scope.find();
-                    } else {
-                        $('.btnSave').button('reset');
-                        alert('An error occurred during data transfer. Please try again...');
-                    }
-                }, function errorResult() {
+                var httpRequest = $http.post('/service/schedule/create', data);
+            }
+            httpRequest.then(function successResult(response) {
+                if (response.data.status == "successful") {
+                    $('#formSchedule').modal('hide');
+                    $scope.find();
+                } else {
                     $('.btnSave').button('reset');
                     alert('An error occurred during data transfer. Please try again...');
-                });
-            }
+                }
+            }, function errorResult() {
+                $('.btnSave').button('reset');
+                alert('An error occurred during data transfer. Please try again...');
+            });
         }
     }
 
@@ -234,12 +209,14 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                     return false;
                 }
                 retVal.time = time;
+                retVal.customTime = "yes";
             } else {
                 alert('Custom Time required. Please check again...');
                 return false;
             }
         } else {
             retVal.time = $scope.buildTime(true);
+            retVal.customTime = "no";
         }
         if(typeof($scope.schedule.note) != 'undefined' && $scope.schedule.note != '' && $scope.schedule.note != null) {
             retVal.note = $scope.schedule.note;
@@ -267,9 +244,9 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
 
     $scope.edit = function (item) {
         $scope.schedule.url = null;
-        $scope.schedule.time = null;
         $scope.schedule = angular.copy(item);
         var runTime = item.run_at.trim().replace(/\s\s+/g, ' ');
+        $scope.schedule.time = runTime;
         var times = runTime.split(' ');
         angular.forEach(times, function (item, index) {
             if (!isNaN(item)) {
@@ -300,9 +277,10 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         if (times.length != 0) {
             $scope.schedule.seconds = times.pop();
         }
-        $scope.customBox = false;
-        $scope.title = "Edit Schedule";
         $scope.buildTime();
+        (item.custom_time === "yes") ? $scope.customBox = true : $scope.customBox = false;
+        $scope.title = "Edit Schedule";
+        $scope.showDescriptions($scope.schedule.time);
         $timeout(function () {
             $('#weekday').val($scope.schedule.weekday);
             $('#months').val($scope.schedule.months);
@@ -313,6 +291,34 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             $('.btnSave').button('reset');
             $('#formSchedule').modal('show');
         });
+    }
+
+    $scope.changeScheduleTime = function (textRule) {
+        textRule = textRule.replace(/ +(?= )/g, '');
+        var splitSpace = textRule.split(' ');
+        if (splitSpace.length > 6 && !$('#validate-time').hasClass('has-error')) {
+            $('#validate-time').addClass('has-error');
+        } else {
+            $('#validate-time').removeClass('has-error');
+        }
+        switch (splitSpace.length) {
+            case 1: $scope.hoverRule = 'weeks'; break;
+            case 2: $scope.hoverRule = 'months'; break;
+            case 3: $scope.hoverRule = 'days'; break;
+            case 4: $scope.hoverRule = 'hours'; break;
+            case 5: $scope.hoverRule = 'minutes'; break;
+            case 6: $scope.hoverRule = 'seconds'; break;
+            default: $scope.hoverRule = 'weeks'; break;
+        }
+        $scope.showDescriptions(textRule);
+    }
+
+    $scope.showDescriptions = function (textRule) {
+        if (textRule.split(' ').length >= 5) {
+            $scope.descriptions = cronstrue.toString(textRule, { use24HourTimeFormat: true });
+        } else {
+            $scope.descriptions = null;
+        }
     }
 
     $scope.find();

@@ -25,7 +25,7 @@ class Schedule extends Model {
     }
 
     static get visible () {
-        return ['id', 'note', 'url', 'run_at', 'created_at', 'updated_at'];
+        return ['id', 'note', 'url', 'run_at', 'custom_time', 'created_at', 'updated_at'];
     }
 
     // logs () {
