@@ -7,9 +7,9 @@
     <title>List - Mega Schedule</title>
     <link rel="shortcut icon" href="{{ assetsUrl('images/schedule.png') }}">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ assetsUrl('images/schedule.png') }}">
-    {{ style('css/bootstrap.min.css') }}
-    {{ style('css/bootstrap-theme.min.css') }}
-    {{ style('css/custom.css') }}
+    {{ style('css/bootstrap.min.css' + '?v=' + config('app.version')) }}
+    {{ style('css/bootstrap-theme.min.css' + '?v=' + config('app.version')) }}
+    {{ style('css/custom.css' + '?v=' + config('app.version')) }}
 </head>
 <body ng-app="MegaSchedule">
     <div class="container-fuild" ng-controller="ScheduleController">
@@ -104,14 +104,14 @@
             </div>
         </div>
     </div>
-    {{ script('/js/jquery.min.js') }}
-    {{ script('/js/bootstrap.min.js') }}
-    {{ script('/js/angular.min.js') }}
-    {{ script('/js/angular-sanitize.min.js') }}
-    {{ script('/js/polyfill.min.js') }}
-    {{ script('/js/Ws.browser.min.js') }}
-    {{ script('/js/cronstrue.min.js') }}
-    {{ script('/js/script.js') }}
+    {{ script('/js/jquery.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/bootstrap.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/angular.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/angular-sanitize.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/polyfill.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/Ws.browser.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/cronstrue.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/script.js' + '?v=' + config('app.version')) }}
 
     <div class="loading" style="display: none">
         <div class="cssload-loading"><i></i><i></i><i></i><i></i></div>

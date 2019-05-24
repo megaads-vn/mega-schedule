@@ -296,7 +296,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     $scope.changeScheduleTime = function (textRule) {
         textRule = textRule.replace(/ +(?= )/g, '');
         var splitSpace = textRule.split(' ');
-        if (splitSpace.length > 6 && !$('#validate-time').hasClass('has-error')) {
+        if ((splitSpace.length <= 4 || splitSpace.length > 6) && !$('#validate-time').hasClass('has-error')) {
             $('#validate-time').addClass('has-error');
         } else {
             $('#validate-time').removeClass('has-error');

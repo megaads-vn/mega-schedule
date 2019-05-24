@@ -207,5 +207,7 @@ module.exports = {
       filename: 'adonis.log',
       level: 'info'
     }
-  }
+  },
+
+  version: 23052019
 }

@@ -2,7 +2,12 @@
 
 /** @type {import('@adonisjs/framework/src/Server')} */
 const Server = use('Server')
+const edge = require('edge.js')
+const Config = use('Config')
 
+edge.global('config', function (key) {
+  return Config.get(key);
+})
 /*
 |--------------------------------------------------------------------------
 | Global Middleware
