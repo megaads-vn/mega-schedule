@@ -5,6 +5,7 @@ const LogSchedule = use('App/Models/LogSchedule');
 const schedule = require('node-schedule');
 const request = require('request');
 const Ws = use('Ws');
+const Logger = use('Logger');
 global.globalSchedule = []; global.scheduleRun = [];
 
 class Schedule {
@@ -65,7 +66,14 @@ class Schedule {
             maxRedirects: 5
         };
         request(requestParams, function (error, response, body) {
-          self.writeLog(scheduleId, response, body, error);
+            if (error) {
+                Logger.info('Request Error', {
+                    scheduleId: scheduleId,
+                    url: url,
+                    error: error
+                });
+            }
+            self.writeLog(scheduleId, response, body, error);
         });
     }
 
@@ -82,7 +90,7 @@ class Schedule {
             }
 
             if (err) {
-                content += '<br >+ Error: ' + err;
+                content += '<br />+ Error: ' + err;
             }
             const logObj = new LogSchedule();
             logObj.schedule_id = scheduleId;
