@@ -243,7 +243,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     }
 
     $scope.edit = function (item) {
-        $scope.schedule.url = null;
+        $scope.schedule = {};
         $scope.schedule = angular.copy(item);
         var runTime = item.run_at.trim().replace(/\s\s+/g, ' ');
         $scope.schedule.time = runTime;
@@ -253,27 +253,27 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                 times[index] = parseInt(item);
             }
         });
-        $scope.schedule.weekday = STAR;
+        $scope.schedule.weekday = 0;
         if (times.length != 0) {
             $scope.schedule.weekday = times.pop();
         }
-        $scope.schedule.months = STAR;
+        $scope.schedule.months = 0;
         if (times.length != 0) {
             $scope.schedule.months = times.pop();
         }
-        $scope.schedule.days = STAR;
+        $scope.schedule.days = 0;
         if (times.length != 0) {
             $scope.schedule.days = times.pop();
         }
-        $scope.schedule.hours = STAR;
+        $scope.schedule.hours = 0;
         if (times.length != 0) {
             $scope.schedule.hours = times.pop();
         }
-        $scope.schedule.minutes = STAR;
+        $scope.schedule.minutes = 0;
         if (times.length != 0) {
             $scope.schedule.minutes = times.pop();
         }
-        $scope.schedule.seconds = STAR;
+        $scope.schedule.seconds = 0;
         if (times.length != 0) {
             $scope.schedule.seconds = times.pop();
         }
