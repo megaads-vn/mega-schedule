@@ -83,7 +83,7 @@ class Schedule {
                     self.sendMail(scheduleId, response.statusCode, body);
                 }
             } catch(err) {
-                
+                self.sendMail(scheduleId, response.statusCode, body);
             }
             
             self.writeLog(scheduleId, response, body, error);
