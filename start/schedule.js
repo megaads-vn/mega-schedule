@@ -77,7 +77,8 @@ class Schedule {
                 });
                 self.sendMail(scheduleId, response.statusCode, error);
             }
-            if (response.statusCode != 200 || typeof body.status == "undefined" || body.status != "successful") {
+            var parseResult = JSON.parse(body);
+            if (response.statusCode != 200 || typeof parseResult.status == "undefined" || parseResult.status != "successful") {
                 self.sendMail(scheduleId, response.statusCode, body);
             }
             self.writeLog(scheduleId, response, body, error);
@@ -114,7 +115,7 @@ class Schedule {
             if(scheduleInfo.last_time) {
                 var lastTime = new Date(scheduleInfo.last_time);
             }
-            if (scheduleInfo.last_time == null || currentTime.getTime() >= lastTime.getTime() + 1 * 60 * 1000) {
+            if (scheduleInfo.last_time == null || currentTime.getTime() >= lastTime.getTime() + 60 * 60 * 1000) {
                 let htmlTeplate = "<ul>";
                 htmlTeplate += `<li>URL: ${scheduleInfo.url}</li>`;
                 htmlTeplate += `<li>Note: ${scheduleInfo.note}</li>`;
