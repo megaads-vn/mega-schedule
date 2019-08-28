@@ -77,10 +77,15 @@ class Schedule {
                 });
                 self.sendMail(scheduleId, response.statusCode, error);
             }
-            var parseResult = JSON.parse(body);
-            if (response.statusCode != 200 || typeof parseResult.status == "undefined" || parseResult.status != "successful") {
-                self.sendMail(scheduleId, response.statusCode, body);
+            try {
+                var parseResult = JSON.parse(body);
+                if (response.statusCode != 200 || typeof parseResult.status == "undefined" || parseResult.status != "successful") {
+                    self.sendMail(scheduleId, response.statusCode, body);
+                }
+            } catch(err) {
+                
             }
+            
             self.writeLog(scheduleId, response, body, error);
         });
     }
