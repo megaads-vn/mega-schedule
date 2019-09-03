@@ -79,13 +79,12 @@ class Schedule {
             }
             try {
                 var parseResult = JSON.parse(body);
-                if (response.statusCode != 200 || typeof parseResult.status == "undefined" || parseResult.status != "successful") {
+                if (response.statusCode != 200 || (typeof parseResult.status != "undefined" && parseResult.status == "fail")) {
                     self.sendMail(scheduleId, response.statusCode, body);
                 }
             } catch(err) {
-                self.sendMail(scheduleId, response.statusCode, body);
+                
             }
-            
             self.writeLog(scheduleId, response, body, error);
         });
     }
