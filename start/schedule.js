@@ -65,22 +65,25 @@ class Schedule {
               "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
               "Cache-Control": "no-cache, no-store, must-revalidate"
             },
-            maxRedirects: 5,
-            timeout: 60 * 60 * 1000
+            maxRedirects: 5
         };
         request(requestParams, function (error, response, body) {
+            let responseCode = 500;
+            if (typeof response != "undefined" && typeof response.statusCode != "undefined") {
+                responseCode = response.statusCode;
+            }
             if (error) {
                 Logger.info('Request Error', {
                     scheduleId: scheduleId,
                     url: url,
                     error: error
                 });
-                self.sendMail(scheduleId, response.statusCode, error);
+                self.sendMail(scheduleId, responseCode, error);
             }
             try {
                 var parseResult = JSON.parse(body);
-                if (response.statusCode != 200 || (typeof parseResult.status != "undefined" && parseResult.status == "fail")) {
-                    self.sendMail(scheduleId, response.statusCode, body);
+                if (responseCode != 200 || (typeof parseResult.status != "undefined" && parseResult.status == "fail")) {
+                    self.sendMail(scheduleId, responseCode, body);
                 }
             } catch(err) {
                 
