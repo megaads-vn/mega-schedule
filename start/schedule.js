@@ -8,7 +8,7 @@ const Ws = use('Ws');
 const Logger = use('Logger');
 const Mail = use('Mail');
 const Config = use('Config');
-global.globalSchedule = []; global.scheduleRun = [];
+global.globalSchedule = {}; global.scheduleRun = [];
 
 class Schedule {
 
@@ -18,21 +18,28 @@ class Schedule {
     }
 
     init(data) {
-        var self = this;
-        data.forEach(function (scheduleInfo) {
-            self.create(scheduleInfo);
+        data.forEach(async (scheduleInfo) => {
+            this.create(scheduleInfo);
         });
     }
 
     delete(scheduleId) {
         if (typeof (globalSchedule[scheduleId]) != 'undefined') {
-            globalSchedule[scheduleId].cancel();
+            try {
+                globalSchedule[scheduleId].cancel();
+            } catch (error) { }
+            delete globalSchedule[scheduleId];
         }
+        
+        console.log("globalSchedule", globalSchedule);
     }
 
     update(scheduleInfo) {
         if(typeof(scheduleInfo.id) != "undefined" && typeof(globalSchedule[scheduleInfo.id]) != 'undefined') {
-            globalSchedule[scheduleInfo.id].cancel();
+            try {
+                globalSchedule[scheduleInfo.id].cancel();
+            } catch (error) { }
+            delete globalSchedule[scheduleInfo.id];
         }
         this.create(scheduleInfo);
     }
@@ -40,8 +47,8 @@ class Schedule {
     create(scheduleInfo) {
         var self = this;
         var runAt = scheduleInfo.run_at.trim().replace(/\s\s+/g, ' ');
+        globalSchedule[scheduleInfo.id] = scheduleInfo;
         globalSchedule[scheduleInfo.id] = schedule.scheduleJob(runAt, function (scheduleInfo) {
-            // console.log("Run: " + scheduleInfo.url);
             if (scheduleRun.length > 10) {
                 scheduleRun.pop();
             }

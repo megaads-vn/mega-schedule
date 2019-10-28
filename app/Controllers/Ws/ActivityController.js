@@ -6,7 +6,9 @@ class ActivityController {
     this.socket = socket;
     this.request = request;
     socket.emit('socketId', socket.id);
-    socket.emit('scheduleRun', scheduleRun);
+    if (typeof scheduleRun != "undefined") {
+      socket.emit('scheduleRun', scheduleRun);
+    }
   }
 
   onClientEmit (message) {

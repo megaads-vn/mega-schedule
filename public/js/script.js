@@ -158,11 +158,13 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         } else if (checkPush > 0) {
             retVal.push(STAR);
         }
-
+        
         if (isReturn) {
             return retVal.join(' ');
         } else {
-            $scope.showDescriptions(retVal.join(' '));
+            var stringTime = retVal.join(' ');
+            $scope.schedule.time = stringTime;
+            $scope.showDescriptions(stringTime);
         }
     }
 
