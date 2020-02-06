@@ -255,31 +255,32 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                 times[index] = parseInt(item);
             }
         });
-        $scope.schedule.weekday = 0;
+        /** default value */
+        $scope.schedule.weekday = STAR;
+        $scope.schedule.months = STAR;
+        $scope.schedule.days = STAR;
+        $scope.schedule.hours = STAR;
+        $scope.schedule.minutes = STAR;
+        $scope.schedule.seconds = STAR;
+
         if (times.length != 0) {
             $scope.schedule.weekday = times.pop();
         }
-        $scope.schedule.months = 0;
         if (times.length != 0) {
             $scope.schedule.months = times.pop();
         }
-        $scope.schedule.days = 0;
         if (times.length != 0) {
             $scope.schedule.days = times.pop();
         }
-        $scope.schedule.hours = 0;
         if (times.length != 0) {
             $scope.schedule.hours = times.pop();
         }
-        $scope.schedule.minutes = 0;
         if (times.length != 0) {
             $scope.schedule.minutes = times.pop();
         }
-        $scope.schedule.seconds = 0;
         if (times.length != 0) {
             $scope.schedule.seconds = times.pop();
         }
-        $scope.buildTime();
         (item.custom_time === "yes") ? $scope.customBox = true : $scope.customBox = false;
         $scope.title = "Edit Schedule";
         $scope.showDescriptions($scope.schedule.time);

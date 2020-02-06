@@ -44,4 +44,7 @@ Date.prototype.getDateTime = (character = ':') => {
 }
 
 const schedule = require('./start/schedule');
-schedule.run();
+
+process.on('adonis:server:start', () => {
+  schedule.run();
+});

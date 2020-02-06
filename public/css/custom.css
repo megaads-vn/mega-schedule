@@ -230,3 +230,7 @@ a {
     font-weight: bold;
     color: #337ab7;
 }
+
+.text-red {
+    color: red;
+}
