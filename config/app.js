@@ -209,5 +209,5 @@ module.exports = {
     }
   },
 
-  version: 06022020
+  version: '06022020'
 }
