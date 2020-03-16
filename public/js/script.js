@@ -69,10 +69,10 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             pageId: $scope.pageId,
             pageSize: $scope.pageSize
         };
-        if(typeof($scope.filter.note) != 'undefined' && $scope.filter.note != '' && $scope.filter.note != null) {
+        if($scope.filter.note && $scope.filter.note != '') {
             retVal.note = $scope.filter.note;
         }
-        if(typeof($scope.filter.link) != 'undefined' && $scope.filter.link != '' && $scope.filter.link != null) {
+        if($scope.filter.link && $scope.filter.link != '') {
             retVal.link = $scope.filter.link;
         }
 
@@ -123,36 +123,35 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
 
     $scope.buildTime = function (isReturn) {
         var retVal = []; var checkPush = 0;
-        if (typeof ($scope.schedule.seconds) != 'undefined' && $scope.schedule.seconds != '' && $scope.schedule.seconds != null && $scope.schedule.seconds != STAR) {
+        if (($scope.schedule.seconds == 0 || $scope.schedule.seconds != STAR) && typeof $scope.schedule.seconds != "undefined" &&  $scope.schedule.seconds != null) {
             checkPush++;
             retVal.push($scope.schedule.seconds);
         }
-
-        if (typeof ($scope.schedule.minutes) != 'undefined' && $scope.schedule.minutes != '' && $scope.schedule.minutes != null) {
+        if (($scope.schedule.minutes == 0 || $scope.schedule.minutes != '') && typeof $scope.schedule.minutes != "undefined" && $scope.schedule.minutes != null) {
             checkPush++;
             retVal.push($scope.schedule.minutes);
         } else if (checkPush > 0) {
             retVal.push(STAR);
         }
-        if (typeof ($scope.schedule.hours) != 'undefined' && $scope.schedule.hours != '' && $scope.schedule.hours != null) {
+        if (($scope.schedule.hours == 0 || $scope.schedule.hours != '') && typeof $scope.schedule.hours != "undefined" && $scope.schedule.hours != null) {
             checkPush++;
             retVal.push($scope.schedule.hours);
         } else if (checkPush > 0) {
             retVal.push(STAR);
         }
-        if (typeof ($scope.schedule.days) != 'undefined' && $scope.schedule.days != '' && $scope.schedule.days != null) {
+        if ($scope.schedule.days && $scope.schedule.days != '') {
             checkPush++;
             retVal.push($scope.schedule.days);
         } else if (checkPush > 0) {
             retVal.push(STAR);
         }
-        if (typeof ($scope.schedule.months) != 'undefined' && $scope.schedule.months != '' && $scope.schedule.months != null) {
+        if ($scope.schedule.months && $scope.schedule.months != '') {
             checkPush++;
             retVal.push($scope.schedule.months);
         } else if (checkPush > 0) {
             retVal.push(STAR);
         }
-        if (typeof ($scope.schedule.weekday) != 'undefined' && $scope.schedule.weekday != '' && $scope.schedule.weekday != null) {
+        if (($scope.schedule.weekday == 0 || $scope.schedule.weekday != '') && typeof $scope.schedule.weekday != "undefined" && $scope.schedule.weekday != null) {
             checkPush++;
             retVal.push($scope.schedule.weekday);
         } else if (checkPush > 0) {
@@ -172,7 +171,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         var data = $scope.buildData();
         if(data) {
             $('.btnSave').button('loading');
-            if (typeof (data.id) != 'undefined' && data.id != '' && data.id != null) {
+            if (data.id && data.id != '') {
                 var httpRequest = $http.patch('/service/schedule/update/' + data.id, data);
             } else {
                 var httpRequest = $http.post('/service/schedule/create', data);
@@ -194,17 +193,17 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
 
     $scope.buildData = function () {
         var retVal = {};
-        if(typeof($scope.schedule.id) != 'undefined' && $scope.schedule.id != '' && $scope.schedule.id != null) {
+        if($scope.schedule.id && $scope.schedule.id != '') {
             retVal.id = $scope.schedule.id;
         }
-        if(typeof($scope.schedule.url) != 'undefined' && $scope.schedule.url != '' && $scope.schedule.url != null) {
+        if($scope.schedule.url && $scope.schedule.url != '') {
             retVal.url = $scope.schedule.url;
         } else {
             alert('URL or Command required. Please check again...');
             return false;
         }
         if($scope.customBox) {
-            if (typeof ($scope.schedule.time) != 'undefined' && $scope.schedule.time != '' && $scope.schedule.time != null) {
+            if ($scope.schedule.time && $scope.schedule.time != '') {
                 var time = $scope.schedule.time.replace(/\s\s+/g, ' ');
                 if (time.split(' ').length > 6) {
                     alert('Custom Time not valid. Please check again...');
@@ -220,7 +219,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             retVal.time = $scope.buildTime(true);
             retVal.customTime = "no";
         }
-        if(typeof($scope.schedule.note) != 'undefined' && $scope.schedule.note != '' && $scope.schedule.note != null) {
+        if($scope.schedule.note && $scope.schedule.note != '') {
             retVal.note = $scope.schedule.note;
         }
         return retVal;
