@@ -1,5 +1,7 @@
 'use strict'
 
+const { get } = require('@adonisjs/framework/src/Route/Manager');
+
 /*
 |--------------------------------------------------------------------------
 | Routes
@@ -19,6 +21,9 @@ const Route = use('Route')
 Route.get('/', 'HomeController.index').as('home');
 Route.post('/authenticate', 'HomeController.authenticate').as('authenticate');
 Route.get('/schedule', 'ScheduleController.index').as('listSchedule').middleware(['token']);
+
+Route.get('/sso/callback', 'HomeController.ssoCallback').as('ssoCallback');
+Route.post('/sso/postback', 'HomeController.ssoPostback').as('ssoPostback');
 
 Route.group(() => {
     Route.get('schedule/find', 'ScheduleController.find').as('findSchedule');
