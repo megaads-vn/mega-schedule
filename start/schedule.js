@@ -72,7 +72,8 @@ class Schedule {
               "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
               "Cache-Control": "no-cache, no-store, must-revalidate"
             },
-            maxRedirects: 5
+            maxRedirects: 5,
+            timeout: 5 * 60 * 1000
         };
         request(requestParams, function (error, response, body) {
             let responseCode = 500;
