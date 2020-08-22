@@ -73,7 +73,7 @@ class Schedule {
               "Cache-Control": "no-cache, no-store, must-revalidate"
             },
             maxRedirects: 5,
-            timeout: 5 * 60 * 1000
+            timeout: 10 * 60 * 1000
         };
         request(requestParams, function (error, response, body) {
             let responseCode = 500;
@@ -82,6 +82,7 @@ class Schedule {
             }
             if (error) {
                 Logger.info('Request Error', {
+                    time: new Date(),
                     scheduleId: scheduleId,
                     url: url,
                     error: error
