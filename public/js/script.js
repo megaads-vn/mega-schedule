@@ -49,7 +49,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
 
     $scope.find = function () {
         $('.loading').show();
-        $http.get('/service/schedule/find?' + $.param($scope.buildFilterData())).then(function successResult(response) {
+        $http.get('/service/schedule/find?' + $.param($scope.buildFilterData())).then(function (response) {
             if (response.data.status == "successful") {
                 $scope.schedules = response.data.data;
                 $scope.pagesCount = response.data.pagesCount;
@@ -58,7 +58,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                 $scope.pagesCount = 0;
             }
             $('.loading').hide();
-        }, function errorResult() {
+        }, function (error) {
             alert('An error occurred during data transfer. Please try again...');
             $('.loading').hide();
         });
@@ -94,10 +94,10 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         var check = confirm('Do you want delete this schedule ?');
         if (check) {
             $('.loading').show();
-            $http.delete('/service/schedule/delete/' + item.id).then(function successResult(response) {
+            $http.delete('/service/schedule/delete/' + item.id).then(function (response) {
                 $scope.find();
                 $('.loading').hide();
-            }, function errorResult() {
+            }, function (error) {
                 alert('An error occurred during data transfer. Please try again...');
                 $('.loading').hide();
             });
@@ -176,7 +176,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             } else {
                 var httpRequest = $http.post('/service/schedule/create', data);
             }
-            httpRequest.then(function successResult(response) {
+            httpRequest.then(function (response) {
                 if (response.data.status == "successful") {
                     $('#formSchedule').modal('hide');
                     $scope.find();
@@ -184,7 +184,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                     $('.btnSave').button('reset');
                     alert('An error occurred during data transfer. Please try again...');
                 }
-            }, function errorResult() {
+            }, function (error) {
                 $('.btnSave').button('reset');
                 alert('An error occurred during data transfer. Please try again...');
             });
@@ -228,7 +228,7 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     $scope.log = function (item) {
         $('.loading').show();
         $scope.titleLog = item.run_at + ' - ' + item.url;
-        $http.get('/service/schedule/history/' + item.id).then(function successResult(response) {
+        $http.get('/service/schedule/history/' + item.id).then(function (response) {
             if (response.data.status == "successful") {
                 $scope.logs = response.data.data;
             } else {
@@ -244,6 +244,16 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
     }
 
     $scope.edit = function (item) {
+        $scope.buildScheduleData(item, "Edit Schedule");
+    }
+
+    $scope.clone = function (item) {
+        var itemClone = angular.copy(item);
+        delete itemClone.id;
+        $scope.buildScheduleData(itemClone, "Clone Schedule");
+    }
+
+    $scope.buildScheduleData = function (item, title) {
         $scope.schedule = {};
         $scope.schedule = angular.copy(item);
         var runTime = item.run_at.trim().replace(/\s\s+/g, ' ');
@@ -280,8 +290,8 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         if (times.length != 0) {
             $scope.schedule.seconds = times.pop();
         }
-        (item.custom_time === "yes") ? $scope.customBox = true : $scope.customBox = false;
-        $scope.title = "Edit Schedule";
+        $scope.customBox = (item.custom_time === "yes") ? true : false;
+        $scope.title = title;
         $scope.showDescriptions($scope.schedule.time);
         $timeout(function () {
             $('#weekday').val($scope.schedule.weekday);
