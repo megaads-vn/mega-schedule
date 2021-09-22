@@ -1,0 +1,31 @@
+<div class="row">
+    <form>
+        <div class="col-md-3" style="margin-bottom:15px;">
+            <div class="form-group">
+                <label>Note &nbsp;</label>
+                <input type="text" class="form-control custom-input" ng-model="filter.note" ng-keypress="myEnter($event)" />
+            </div>
+        </div>
+        <div class="col-md-3" style="margin-bottom:15px;">
+            <div class="form-group">
+                <label>URL &nbsp;</label>
+                <input type="text" class="form-control custom-input" ng-model="filter.link" ng-keypress="myEnter($event)" />
+            </div>
+        </div>
+        <div class="col-md-3" style="margin-bottom:15px;">
+            <div class="form-group">
+                <label>Project &nbsp;</label>
+                <select class="form-control" ng-model="filter.project_id" ng-options="project.id as project.name for project in projects">
+                    <option value="">All Project</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 text-center" style="margin-bottom:15px;">
+            <div class="form-group">
+                <label style="display: block">&nbsp;</label>
+                <button type="button" class="btn btn-info" ng-click="search()"><span class="glyphicon glyphicon-search"></span> Search</button>
+                <button type="button" class="btn btn-danger" ng-click="reset()"><span class="glyphicon glyphicon-remove"></span> Reset</button>
+            </div>
+        </div>
+    </form>
+</div>

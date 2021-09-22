@@ -15,7 +15,7 @@ class ScheduleController extends BaseController {
             days: this.range(1, 32),
             months: this.range(1, 13),
         }
-        return view.render('list', data);
+        return view.render('schedule.index', data);
     }
 
     async find({ request, response }) {
@@ -56,7 +56,7 @@ class ScheduleController extends BaseController {
 
     async delete({ params, response }) {
         var result = this.getDefaultStatus();
-        if(typeof(params.id) != 'undefined' && params.id != '' && params.id != null) {
+        if (params.id && params.id != '') {
             var schedule = await Schedule.findOrFail(params.id);
             scheduleRunning.delete(params.id);
             var status = schedule.delete();
@@ -70,7 +70,7 @@ class ScheduleController extends BaseController {
 
     async history({ params, response }) {
         var result = this.getDefaultStatus();
-        if(typeof(params.id) != 'undefined' && params.id != '' && params.id != null) {
+        if(params.id && params.id != '') {
             var logs = await LogSchedule.query().where('schedule_id', params.id).limit(10).orderBy('id', 'desc');
             result = this.getSuccessStatus();
             result.data = logs;
@@ -81,16 +81,21 @@ class ScheduleController extends BaseController {
     buildData(data, schedule, mode = 'create') {
         var result = this.getDefaultStatus();
 
-        if (typeof (data.url) != 'undefined' && data.url != '' && data.url != null && typeof (data.time) != 'undefined' && data.time != '' && data.time != null) {
+        if (data.url && data.url != '' && data.time && data.time != '') {
             var urlOld = schedule.url;
             var timeOld = schedule.run_at;
             schedule.url = data.url;
             schedule.run_at = data.time;
 
-            if(typeof(data.note) != 'undefined' && data.note != '' && data.note != null) {
+            if (data.project_id && data.project_id != '') {
+                schedule.project_id = data.project_id;
+            }
+
+            if (data.note && data.note != '') {
                 schedule.note = data.note;
             }
-            if(typeof(data.customTime) != 'undefined' && data.customTime != '' && data.customTime != null) {
+            
+            if (data.customTime && data.customTime != '') {
                 schedule.custom_time = data.customTime;
             }
 
@@ -111,11 +116,15 @@ class ScheduleController extends BaseController {
     }
 
     buildFilterData(query, request) {
-        if(typeof(request.input('note')) != 'undefined' && request.input('note') != '' && request.input('note') != null) {
-            query.where('note', 'LIKE', '%' + request.input('note') + '%');
+        let input = request.all();
+        if (input.note && input.note != '') {
+            query.where('note', 'LIKE', `%${input.note}%`);
         }
-        if(typeof(request.input('link')) != 'undefined' && request.input('link') != '' && request.input('link') != null) {
-            query.where('url', 'LIKE', '%' + request.input('link') + '%');
+        if (input.link && input.link != '') {
+            query.where('url', 'LIKE', `%${input.link}%`);
+        }
+        if (input.project_id && input.project_id != '') {
+            query.where('project_id', '=', input.project_id);
         }
         return query;
     }

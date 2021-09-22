@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>List - Mega Schedule</title>
-    <link rel="shortcut icon" href="{{ assetsUrl('images/schedule.png') }}">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ assetsUrl('images/schedule.png') }}">
-    {{ style('css/bootstrap.min.css' + '?v=' + config('app.version')) }}
-    {{ style('css/bootstrap-theme.min.css' + '?v=' + config('app.version')) }}
-    {{ style('css/custom.css' + '?v=' + config('app.version')) }}
-</head>
-<body ng-app="MegaSchedule">
+@layout('layout.master')
+
+@section('javascript')
+	@super
+    {{ script('/js/polyfill.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/Ws.browser.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/cronstrue.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/script.js' + '?v=' + config('app.version')) }}
+@endsection
+
+@section('content')
     <div class="container-fuild" ng-controller="ScheduleController">
         <div class="row" style="margin:15px 0px" ng-cloak>
             <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
@@ -25,7 +22,7 @@
                         <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                     </div>
                     <div class="panel-body">
-                        @include('filter')
+                        @include('schedule.filter')
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered no-margin-bottom">
                                 <thead>
@@ -33,8 +30,9 @@
                                         <th class="text-center vertical-align" style="width: 5%">Index</th>
                                         <th class="col-md-3 text-center vertical-align">Note</th>
                                         <th class="col-md-4 text-center vertical-align">Time / URL</th>
+                                        <th class="col-md-2 text-center vertical-align">Project</th>
                                         <th class="col-md-1 text-center vertical-align">Create<br />Update</th>
-                                        <th class="col-md-3 text-center vertical-align">
+                                        <th class="text-center vertical-align">
                                             <button type="button" class="btn btn-sm btn-primary" ng-click="showForm()">
                                                 <span class="glyphicon glyphicon-plus"></span> Add New
                                             </button>
@@ -49,23 +47,28 @@
                                             <p>[{item.run_at}]</p>
                                             <a href="[{item.url}]" target="_blank">[{item.url}]</a>
                                         </td>
+                                        <td>
+                                            <span ng-if="item.project_id">[{ getByField(projects, 'id', item.project_id).name }]</span>
+                                        </td>
                                         <td class="vertical-align text-center">
                                             <label class="label label-default block-item">[{summarizeDateTime(item.created_at, true)}]</label>
                                             <label class="label label-default block-item">[{summarizeDateTime(item.updated_at, true)}]</label>
                                         </td>
                                         <td class="vertical-align text-center">
-                                            <button type="button" class="btn btn-sm btn-default" ng-click="log(item)" title="Log Item">
-                                                <span class="glyphicon glyphicon-list-alt"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-warning" ng-click="clone(item)" title="Clone Item">
-                                                <span class="glyphicon glyphicon-book"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-success" ng-click="edit(item)" title="Edit Item">
-                                                <span class="glyphicon glyphicon-pencil"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger" ng-click="delete(item)" title="Delete Item">
-                                                <span class="glyphicon glyphicon-trash"></span>
-                                            </button>
+                                            <div class="schedule-action">
+                                                <button type="button" class="btn btn-sm btn-default" ng-click="log(item)" title="Log Item">
+                                                    <span class="glyphicon glyphicon-list-alt"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-warning" ng-click="clone(item)" title="Clone Item">
+                                                    <span class="glyphicon glyphicon-duplicate"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-success" ng-click="edit(item)" title="Edit Item">
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger" ng-click="delete(item)" title="Delete Item">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr ng-show="schedules.length == 0">
@@ -75,10 +78,8 @@
                             </table>
                         </div>
                         <div class="text-center">
-                            @!component('pagination', accessPageId = "pageId", accessPagesCount = "pagesCount", accessFind = "find()" )
+                            @!component('common.pagination', accessPageId = "pageId", accessPagesCount = "pagesCount", accessFind = "find()" )
                         </div>
-                        @include('form')
-                        @include('log')
                     </div>
                 </div>
             </div>
@@ -106,18 +107,10 @@
                 </div>
             </div>
         </div>
+        @include('schedule.form')
+        @include('schedule.log')
+        @include('project.form')
     </div>
-    {{ script('/js/jquery.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/bootstrap.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/angular.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/angular-sanitize.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/polyfill.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/Ws.browser.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/cronstrue.min.js' + '?v=' + config('app.version')) }}
-    {{ script('/js/script.js' + '?v=' + config('app.version')) }}
+    
+@endsection
 
-    <div class="loading" style="display: none">
-        <div class="cssload-loading"><i></i><i></i><i></i><i></i></div>
-    </div>
-</body>
-</html>

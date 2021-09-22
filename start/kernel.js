@@ -8,6 +8,8 @@ const Config = use('Config')
 edge.global('config', function (key) {
   return Config.get(key);
 })
+
+edge.global('currentTime', new Date());
 /*
 |--------------------------------------------------------------------------
 | Global Middleware

@@ -26,4 +26,10 @@ Route.group(() => {
     Route.patch('schedule/update/:id', 'ScheduleController.update').as('updateSchedule');
     Route.delete('schedule/delete/:id', 'ScheduleController.delete').as('deleteSchedule');
     Route.get('schedule/history/:id', 'ScheduleController.history').as('historySchedule');
+
+    Route.get('project/find', 'ProjectController.find').as('findProject');
+    Route.post('project/create', 'ProjectController.create').as('findProject');
+    Route.patch('project/update/:id', 'ProjectController.update').as('findProject');
+    Route.delete('project/delete/:id', 'ProjectController.delete').as('findProject');
+
 }).prefix('service').middleware(['token']);

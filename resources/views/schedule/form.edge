@@ -9,7 +9,13 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-left">
                     <div class="form-group">
-                        <label>URL</label>
+                        <label>Project</label>
+                        <select class="form-control" ng-model="schedule.project_id" ng-options="project.id as project.name for project in projectsForm" ng-change="changeProject(schedule.project_id)">
+                            <option value="">-- Select one project --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL <span class="text-danger">*</span></label>
                         <input type="text" ng-model="schedule.url" class="form-control" placeholder="Link or Command..." />
                     </div>
                     <div class="form-group">
@@ -147,7 +153,7 @@
                         <span ng-click="hoverRule = 'weeks'" ng-class="hoverRule == 'weeks' ? 'active' : ''">Weekday</span>
                     </div>
                     <div class="minute-rule" style="margin-top:20px">
-                        @include('rule')
+                        @include('schedule.rule')
                     </div>
                 </div>
             </div>

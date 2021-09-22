@@ -15,14 +15,18 @@ $(document).ready(function () {
     });
 });
 
-angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
-    $interpolateProvider.startSymbol('[{');
-    $interpolateProvider.endSymbol('}]');
-}).controller('ScheduleController', function ($scope, $timeout, $http) {
+system.controller('ScheduleController', function ($scope, $timeout, $http) {
 
-    $scope.pageId = 0; $scope.pageSize = 20; $scope.title = "New Schedule"; $scope.titleLog = null;
-    $scope.schedules = []; $scope.filter = {}; $scope.logs = []; const STAR = '*';
-    $scope.runs = []; $scope.hoverRule = 'weeks';
+    this.prototype = new BaseController($scope);
+
+    $scope.pageId = 0; $scope.pageSize = 20; 
+    $scope.titleLog = null;
+    $scope.schedules = []; $scope.filter = {}; 
+    $scope.logs = []; const STAR = '*';
+    $scope.runs = []; $scope.hoverRule = 'weeks'; 
+    $scope.project = {};
+    $scope.projects = []; $scope.projectsForm = [];
+
     var defaultValue = {
         seconds: STAR,
         minutes: STAR,
@@ -32,6 +36,27 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         weekday: STAR
     };
     $scope.schedule = defaultValue; $scope.customBox = false;
+
+    $scope.init = async function () {
+        $scope.fetchProject();
+        $scope.find();
+    }
+
+    $scope.fetchProject = function () {
+        $http.get('/service/project/find', {params: {pageSize: -1}}).then(function (response) {
+            if (response.data.status == "successful") {
+                $scope.projects = angular.copy(response.data.data);
+                $scope.projectsForm = angular.copy(response.data.data);
+                $scope.projectsForm.push({
+                    id: -1,
+                    name: 'New Project...'
+                });
+            } else {
+                $scope.projects = [];
+                $scope.projectsForm = [];
+            }
+        });
+    }
 
     $scope.showForm = function () {
         $scope.title = "New Schedule";
@@ -59,8 +84,8 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             }
             $('.loading').hide();
         }, function (error) {
-            alert('An error occurred during data transfer. Please try again...');
             $('.loading').hide();
+            showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
         });
     }
 
@@ -69,11 +94,14 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
             pageId: $scope.pageId,
             pageSize: $scope.pageSize
         };
-        if($scope.filter.note && $scope.filter.note != '') {
+        if ($scope.filter.note && $scope.filter.note != '') {
             retVal.note = $scope.filter.note;
         }
-        if($scope.filter.link && $scope.filter.link != '') {
+        if ($scope.filter.link && $scope.filter.link != '') {
             retVal.link = $scope.filter.link;
+        }
+        if ($scope.filter.project_id && $scope.filter.project_id != '') {
+            retVal.project_id = $scope.filter.project_id;
         }
 
         return retVal;
@@ -98,8 +126,8 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                 $scope.find();
                 $('.loading').hide();
             }, function (error) {
-                alert('An error occurred during data transfer. Please try again...');
                 $('.loading').hide();
+                showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
             });
         }
     }
@@ -182,45 +210,47 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
                     $scope.find();
                 } else {
                     $('.btnSave').button('reset');
-                    alert('An error occurred during data transfer. Please try again...');
+                    showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
                 }
             }, function (error) {
                 $('.btnSave').button('reset');
-                alert('An error occurred during data transfer. Please try again...');
             });
         }
     }
 
     $scope.buildData = function () {
         var retVal = {};
-        if($scope.schedule.id && $scope.schedule.id != '') {
+        if ($scope.schedule.id && $scope.schedule.id != '') {
             retVal.id = $scope.schedule.id;
         }
-        if($scope.schedule.url && $scope.schedule.url != '') {
+        if ($scope.schedule.url && $scope.schedule.url != '') {
             retVal.url = $scope.schedule.url;
         } else {
-            alert('URL or Command required. Please check again...');
+            showMessage('Error', 'URL or Command required. Please check again...', 'error', 'glyphicon-remove');
             return false;
         }
-        if($scope.customBox) {
+        if ($scope.customBox) {
             if ($scope.schedule.time && $scope.schedule.time != '') {
                 var time = $scope.schedule.time.replace(/\s\s+/g, ' ');
                 if (time.split(' ').length > 6) {
-                    alert('Custom Time not valid. Please check again...');
+                    showMessage('Error', 'Custom Time not valid. Please check again...', 'error', 'glyphicon-remove');
                     return false;
                 }
                 retVal.time = time;
                 retVal.customTime = "yes";
             } else {
-                alert('Custom Time required. Please check again...');
+                showMessage('Error', 'Custom Time required. Please check again...', 'error', 'glyphicon-remove');
                 return false;
             }
         } else {
             retVal.time = $scope.buildTime(true);
             retVal.customTime = "no";
         }
-        if($scope.schedule.note && $scope.schedule.note != '') {
+        if ($scope.schedule.note && $scope.schedule.note != '') {
             retVal.note = $scope.schedule.note;
+        }
+        if ($scope.schedule.project_id && $scope.schedule.project_id != '') {
+            retVal.project_id = $scope.schedule.project_id;
         }
         return retVal;
     }
@@ -333,7 +363,53 @@ angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
         }
     }
 
-    $scope.find();
+    $scope.changeProject = function (projectId) {
+        if (projectId == -1) {
+            $scope.project = {};
+            $timeout(function () {
+                $('#formSchedule').modal('hide');
+                $('#formProject').modal('show');
+            });
+        }
+    }
+
+    $scope.closeProject = function (isReset) {
+        if (!isReset) {
+            delete $scope.schedule.project_id;
+        }
+        $timeout(function () {
+            $('#formProject').modal('hide');
+            $('#formSchedule').modal('show');
+        });
+    }
+
+    $scope.saveProject = function () {
+        if (!$scope.project.name || $scope.project.name == '') {
+            showMessage('Error', 'Project name required. Please check again.', 'error', 'glyphicon-remove');
+            return;
+        }
+
+        $('.btnSaveProject').button('loading');
+        $http.post('/service/project/create', $scope.project).then(function (response) {
+            if (response.data.status == "successful") {
+                var project = response.data.data;
+                var newProject = $scope.projectsForm.pop();
+                $scope.projects.push(project);
+                $scope.projectsForm.push(project);
+                $scope.projectsForm.push(newProject);
+                $scope.schedule.project_id = project.id;
+                $scope.closeProject(true);
+            } else {
+                showMessage('Error', response.data.message, 'error', 'glyphicon-remove');
+            }
+            $('.btnSaveProject').button('reset');
+        }, function (error) {
+            $('.btnSaveProject').button('reset');
+            showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
+        });
+    }
+
+    $scope.init();
 
     /* ------------------------- WEB SOCKET ---------------------- */
     var ws = adonis.Ws().connect();

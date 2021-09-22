@@ -12,22 +12,6 @@ class Schedule extends Model {
         return 'id';
     }
 
-    static get createdAtColumn () {
-        return 'created_at';
-    }
-
-    static get updatedAtColumn () {
-        return 'updated_at';
-    }
-
-    static get hidden () {
-        return [];
-    }
-
-    static get visible () {
-        return ['id', 'note', 'url', 'run_at', 'custom_time', 'last_time', 'created_at', 'updated_at'];
-    }
-
     // logs () {
     //     return this.hasMany('App/Models/ScheduleLog')
     // }

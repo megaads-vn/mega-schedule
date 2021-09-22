@@ -25,7 +25,7 @@ class LogSchedule extends Model {
     }
 
     static get visible () {
-        return ['id', 'schedule_id', 'log', 'created_at', 'updated_at'];
+        return ['id', 'schedule_id', 'request', 'response', 'created_at', 'updated_at'];
     }
 }
 
