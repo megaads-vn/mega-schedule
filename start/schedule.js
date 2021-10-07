@@ -93,9 +93,8 @@ class Schedule {
                 if (responseCode != 200 || (parseResult.status && parseResult.status == "fail")) {
                     EmailService.sendMail(scheduleId, responseCode, body);
                 }
-            } catch(err) { 
-                console.error(err);
-            }
+            } catch(err) {}
+            
             this.writeLog(logObj, response, body, error);
         });
     }
