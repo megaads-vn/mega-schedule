@@ -220,15 +220,29 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
 
     $scope.buildData = function () {
         var retVal = {};
-        if ($scope.schedule.id && $scope.schedule.id != '') {
-            retVal.id = $scope.schedule.id;
-        }
-        if ($scope.schedule.url && $scope.schedule.url != '') {
-            retVal.url = $scope.schedule.url;
-        } else {
+        var fillable = ['id', 'url', 'note', 'project_id', 'emails'];
+       
+        if (!$scope.schedule.url || $scope.schedule.url == '') {
             showMessage('Error', 'URL or Command required. Please check again...', 'error', 'glyphicon-remove');
             return false;
         }
+
+        if ($scope.schedule.emails && $scope.schedule.emails != '') {
+            var emails = $scope.schedule.emails.split(',').map(function (item) { return item.trim() });
+            var invalidEmail = false;
+            for (var k in emails) {
+                if (!$scope.isValidEmail(emails[k])) {
+                    invalidEmail = true;
+                }
+            }
+            if (invalidEmail) {
+                showMessage('Error', 'Email invalid. Please check again...', 'error', 'glyphicon-remove');
+                return false;
+            } else {
+                $scope.schedule.emails = emails.join(',');
+            }
+        }
+
         if ($scope.customBox) {
             if ($scope.schedule.time && $scope.schedule.time != '') {
                 var time = $scope.schedule.time.replace(/\s\s+/g, ' ');
@@ -246,12 +260,13 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
             retVal.time = $scope.buildTime(true);
             retVal.customTime = "no";
         }
-        if ($scope.schedule.note && $scope.schedule.note != '') {
-            retVal.note = $scope.schedule.note;
-        }
-        if ($scope.schedule.project_id && $scope.schedule.project_id != '') {
-            retVal.project_id = $scope.schedule.project_id;
-        }
+
+        fillable.forEach(function (field) {
+            if ($scope.schedule[field] && $scope.schedule[field] != '') {
+                retVal[field] = $scope.schedule[field];
+            }
+        });
+
         return retVal;
     }
 

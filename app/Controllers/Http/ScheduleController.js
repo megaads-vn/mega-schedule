@@ -94,6 +94,10 @@ class ScheduleController extends BaseController {
             if (data.note && data.note != '') {
                 schedule.note = data.note;
             }
+
+            if (data.emails && data.emails != '') {
+                schedule.emails = data.emails;
+            }
             
             if (data.customTime && data.customTime != '') {
                 schedule.custom_time = data.customTime;
@@ -106,7 +110,7 @@ class ScheduleController extends BaseController {
                 } else if (urlOld != data.url || timeOld != data.time) {
                     scheduleRunning.update(schedule.toJSON());
                 }
-            })
+            });
 
             if (status) {
                 result = this.getSuccessStatus();
