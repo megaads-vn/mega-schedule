@@ -2,6 +2,7 @@
 
 const Mail = use('Mail');
 const Config = use('Config');
+const ScheduleData = use('App/Models/Schedule');
 
 class EmailService {
 
