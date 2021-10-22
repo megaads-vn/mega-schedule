@@ -273,7 +273,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         return retVal;
     }
 
-    $scope.log = function (item) {
+    $scope.viewLog = function (item) {
         $scope.log = angular.copy(item);
         $scope.log.title = item.run_at + ' - ' + item.url;
         $scope.log.limit = $scope.limits[0];
