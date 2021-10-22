@@ -8,7 +8,22 @@
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-12">
-                    <p><strong>Schedule:</strong> <span class="text-primary">[{titleLog}]</span></p>
+                    <p><strong>Schedule:</strong> <span class="text-primary">[{log.title}]</span></p>
+                </div>
+                <div class="col-md-12">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-1">&nbsp;</div>
+                            <label class="control-label col-md-2">Limit</label>
+                            <div class="col-md-4">
+                                <select class="form-control" ng-model="log.limit" ng-options="item for item in limits"></select>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <button type="button" class="btn btn-info" ng-click="findLog()"><span class="glyphicon glyphicon-search"></span> Find</button>
+                                <button type="button" class="btn btn-danger" ng-click="resetLog()"><span class="glyphicon glyphicon-remove"></span> Reset</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="col-md-12">
                     <div class="table-responsive" style="max-height:400px;overflow-y:scroll">

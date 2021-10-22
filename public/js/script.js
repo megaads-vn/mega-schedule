@@ -19,13 +19,16 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
 
     this.prototype = new BaseController($scope);
 
-    $scope.pageId = 0; $scope.pageSize = 20; 
-    $scope.titleLog = null;
+    $scope.pageId = 0; $scope.pageSize = 20;
     $scope.schedules = []; $scope.filter = {}; 
     $scope.logs = []; const STAR = '*';
     $scope.runs = []; $scope.hoverRule = 'weeks'; 
     $scope.project = {};
     $scope.projects = []; $scope.projectsForm = [];
+    $scope.limits = [10, 20, 50, 70, 100, 200, 250];
+    $scope.log = {
+        limit: $scope.limits[0]
+    };
 
     var defaultValue = {
         seconds: STAR,
@@ -271,9 +274,20 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
     }
 
     $scope.log = function (item) {
+        $scope.log = angular.copy(item);
+        $scope.log.title = item.run_at + ' - ' + item.url;
+        $scope.log.limit = $scope.limits[0];
+        $scope.findLog();
+    }
+
+    $scope.resetLog = function () {
+        $scope.log.limit = $scope.limits[0];
+        $scope.findLog();
+    }
+
+    $scope.findLog = function () {
         $('.loading').show();
-        $scope.titleLog = item.run_at + ' - ' + item.url;
-        $http.get('/service/schedule/history/' + item.id).then(function (response) {
+        $http.get('/service/schedule/history/' + $scope.log.id, { params: {limit: $scope.log.limit} }).then(function (response) {
             if (response.data.status == "successful") {
                 $scope.logs = response.data.data;
             } else {
@@ -423,6 +437,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
             showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
         });
     }
+
 
     $scope.init();
 

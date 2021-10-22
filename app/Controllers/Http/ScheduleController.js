@@ -68,10 +68,10 @@ class ScheduleController extends BaseController {
         response.json(result);
     }
 
-    async history({ params, response }) {
+    async history({ params, request, response }) {
         var result = this.getDefaultStatus();
         if(params.id && params.id != '') {
-            var logs = await LogSchedule.query().where('schedule_id', params.id).limit(10).orderBy('id', 'desc');
+            var logs = await LogSchedule.query().where('schedule_id', params.id).limit(request.input('limit', 10)).orderBy('id', 'desc');
             result = this.getSuccessStatus();
             result.data = logs;
         }
