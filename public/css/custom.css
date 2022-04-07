@@ -21,13 +21,9 @@ a {
     display: block;
 }
 
-@media (min-width: 768px){
-    .custom-input {
-        width: 250px !important;
-    }
+.schedule-info p {
+    margin-bottom: 5px;
 }
-
-
 /* Absolute Center Spinner */
 
 .loading {

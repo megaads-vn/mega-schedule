@@ -11,7 +11,7 @@ global.globalSchedule = {}; global.scheduleRun = [];
 class Schedule {
 
     async run() {
-        var data = await ScheduleData.all();
+        var data = await ScheduleData.query().where('status', '=', 'active').fetch();
         this.init(data.toJSON());
     }
 

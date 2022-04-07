@@ -19,13 +19,21 @@
                         <input type="text" ng-model="schedule.url" class="form-control" placeholder="Link or Command..." />
                     </div>
                     <div class="form-group">
-                        <label>Note</label>
-                        <input type="text" ng-model="schedule.note" class="form-control" />
+                        <label>Status <span class="text-danger">*</span></label>
+                        <select class="form-control" ng-model="schedule.status" ng-options="status.code as status.name for status in statuses">
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Notification</label>
                         <input type="text" ng-model="schedule.emails" class="form-control" placeholder="Enter multiple emails separated by commas" />
                     </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea rows="5" ng-model="schedule.note" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-right">
+                    <h4 class="visible-xs hidden-sm hidden-md hidden-lg text-center" style="margin: 10px 0px">SET TIME</h4>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -142,8 +150,6 @@
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-right">
                     <div class="form-group" id="validate-time">
                         <label><input type="checkbox" ng-model="customBox" /> Custom Time </label>
                         <input type="text" ng-model="schedule.time" ng-keyup="changeScheduleTime(schedule.time)" class="form-control" ng-disabled="!customBox" style="text-align:center; word-spacing: 30px;" placeholder="* * * * * *" />

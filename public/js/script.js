@@ -29,6 +29,10 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
     $scope.log = {
         limit: $scope.limits[0]
     };
+    $scope.statuses = [
+        { code: 'active', name: 'Active' },
+        { code: 'pending', name: 'Pending' },
+    ];
 
     var defaultValue = {
         seconds: STAR,
@@ -36,9 +40,11 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         hours: STAR,
         days: STAR,
         months: STAR,
-        weekday: STAR
+        weekday: STAR,
+        status: $scope.statuses[0].code
     };
-    $scope.schedule = defaultValue; $scope.customBox = false;
+    $scope.schedule = defaultValue; 
+    $scope.customBox = false;
 
     $scope.init = async function () {
         $scope.fetchProject();
@@ -97,16 +103,13 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
             pageId: $scope.pageId,
             pageSize: $scope.pageSize
         };
-        if ($scope.filter.note && $scope.filter.note != '') {
-            retVal.note = $scope.filter.note;
-        }
-        if ($scope.filter.link && $scope.filter.link != '') {
-            retVal.link = $scope.filter.link;
-        }
-        if ($scope.filter.project_id && $scope.filter.project_id != '') {
-            retVal.project_id = $scope.filter.project_id;
-        }
-
+        var fillable = ['terms', 'status', 'project_id'];
+        fillable.forEach(function (field) {
+            if ($scope.filter[field] && $scope.filter[field] != '') {
+                retVal[field] = $scope.filter[field];
+            }
+        });
+        
         return retVal;
     }
 
@@ -223,7 +226,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
 
     $scope.buildData = function () {
         var retVal = {};
-        var fillable = ['id', 'url', 'note', 'project_id', 'emails'];
+        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status'];
        
         if (!$scope.schedule.url || $scope.schedule.url == '') {
             showMessage('Error', 'URL or Command required. Please check again...', 'error', 'glyphicon-remove');

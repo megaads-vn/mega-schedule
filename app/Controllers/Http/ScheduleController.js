@@ -82,8 +82,6 @@ class ScheduleController extends BaseController {
         var result = this.getDefaultStatus();
 
         if (data.url && data.url != '' && data.time && data.time != '') {
-            var urlOld = schedule.url;
-            var timeOld = schedule.run_at;
             schedule.url = data.url;
             schedule.run_at = data.time;
 
@@ -93,6 +91,10 @@ class ScheduleController extends BaseController {
 
             if (data.note && data.note != '') {
                 schedule.note = data.note;
+            }
+
+            if (data.status && data.status != '') {
+                schedule.status = data.status;
             }
 
             if (data.emails && data.emails != '') {
@@ -105,10 +107,15 @@ class ScheduleController extends BaseController {
 
             var status = schedule.save();
             status.then(function () {
-                if (mode === 'create') {
-                    scheduleRunning.create(schedule.toJSON());
-                } else if (urlOld != data.url || timeOld != data.time) {
-                    scheduleRunning.update(schedule.toJSON());
+                let scheduleObj = schedule.toJSON();
+                if (schedule.status == 'active') {
+                    if (mode === 'create') {
+                        scheduleRunning.create(scheduleObj);
+                    } else {
+                        scheduleRunning.update(scheduleObj);
+                    }
+                } else {
+                    scheduleRunning.delete(scheduleObj.id);
                 }
             });
 
@@ -121,14 +128,17 @@ class ScheduleController extends BaseController {
 
     buildFilterData(query, request) {
         let input = request.all();
-        if (input.note && input.note != '') {
-            query.where('note', 'LIKE', `%${input.note}%`);
-        }
-        if (input.link && input.link != '') {
-            query.where('url', 'LIKE', `%${input.link}%`);
+        if (input.terms && input.terms != '') {
+            query.where(function (query) {
+                query.orWhere('note', 'LIKE', `%${input.terms}%`);
+                query.orWhere('url', 'LIKE', `%${input.terms}%`);
+            });
         }
         if (input.project_id && input.project_id != '') {
             query.where('project_id', '=', input.project_id);
+        }
+        if (input.status && input.status != '') {
+            query.where('status', '=', input.status);
         }
         return query;
     }
