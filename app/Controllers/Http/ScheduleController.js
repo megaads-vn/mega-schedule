@@ -73,8 +73,8 @@ class ScheduleController extends BaseController {
         if(params.id && params.id != '') {
             var logs = await LogSchedule.query()
                                         .where('schedule_id', params.id)
-                                        .limit(request.input('limit', 10))
-                                        .offset(request.input('offset', 0))
+                                        .limit(parseInt(request.input('limit', 10)))
+                                        .offset(parseInt(request.input('offset', 0)))
                                         .orderBy('id', 'desc')
                                         .fetch();
                                         
