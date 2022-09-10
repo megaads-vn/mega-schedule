@@ -64,8 +64,8 @@ class Schedule {
         let requestParams = {
             uri: url,
             headers: {
-              "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36 - Schedule",
-              "Cache-Control": "no-cache, no-store, must-revalidate"
+                "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36 - Schedule",
+                "Cache-Control": "no-cache, no-store, must-revalidate"
             },
             rejectUnauthorized: false,
             maxRedirects: 5,
@@ -105,7 +105,10 @@ class Schedule {
         
         if (response && response.statusCode) {
             content += '<br />+ Status: ' + response.statusCode;
-            let contentTypes = response.headers['content-type'].split(';');
+            let contentTypes = [];
+            if (response.headers['content-type']) {
+                contentTypes = response.headers['content-type'].split(';');
+            } 
             if (contentTypes.indexOf('application/json') > -1) {
                 content += '<br />+ Body: ' + body;
             }
