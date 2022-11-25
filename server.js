@@ -17,9 +17,11 @@
 |     Make sure to pass relative path from the project root.
 */
 
-const { Ignitor } = require('@adonisjs/ignitor')
 
 process.env.TZ = 'Asia/Ho_Chi_Minh';
+global.globalSchedule = {}; global.scheduleRun = [];
+
+const { Ignitor } = require('@adonisjs/ignitor')
 
 new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
@@ -42,9 +44,3 @@ Date.prototype.getDateTime = (character = ':') => {
     day = (day < 10 ? "0" : "") + day;
     return year + "-" + month + "-" + day + " " + hour + character + min + character + sec;
 }
-
-const schedule = require('./start/schedule');
-
-process.on('adonis:server:start', () => {
-  schedule.run();
-});

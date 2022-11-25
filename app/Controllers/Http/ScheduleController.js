@@ -3,7 +3,7 @@
 const Schedule = use('App/Models/Schedule');
 const LogSchedule = use('App/Models/LogSchedule');
 const BaseController = use('App/Controllers/Http/BaseController');
-const scheduleRunning = require('../../../start/schedule');
+const ScheduleService = use('App/Services/ScheduleService');
 
 class ScheduleController extends BaseController {
 
@@ -23,7 +23,7 @@ class ScheduleController extends BaseController {
         var pageId = parseInt(request.input('pageId', 0));
         var pageSize = parseInt(request.input('pageSize', 30));
         var id = request.input('id');
-        if(typeof(id) != 'undefined' && id != '' && id != null) {
+        if (id && id != '') {
             var schedules = await Schedule.findOrFail(id);
             var recordsCount = 1;
         } else {
@@ -47,7 +47,7 @@ class ScheduleController extends BaseController {
 
     async update({ params, request, response }) {
         var result = this.getDefaultStatus();
-        if (typeof (params.id) != 'undefined' && params.id != '' && params.id != null) {
+        if (params.id && params.id != '') {
             var schedule = await Schedule.findOrFail(params.id);
             result = this.buildData(request.all(), schedule, 'update');
         }
@@ -58,7 +58,7 @@ class ScheduleController extends BaseController {
         var result = this.getDefaultStatus();
         if (params.id && params.id != '') {
             var schedule = await Schedule.findOrFail(params.id);
-            scheduleRunning.delete(params.id);
+            ScheduleService.delete(params.id);
             var status = schedule.delete();
             if (status) {
                 var log = await LogSchedule.query().where('schedule_id', params.id).delete();
@@ -95,15 +95,15 @@ class ScheduleController extends BaseController {
                 schedule.project_id = data.project_id;
             }
 
-            if (data.note && data.note != '') {
-                schedule.note = data.note;
-            }
-
             if (data.status && data.status != '') {
                 schedule.status = data.status;
             }
 
-            if (data.emails && data.emails != '') {
+            if (typeof data.note != "undefined") {
+                schedule.note = data.note;
+            }
+
+            if (typeof data.emails != "undefined") {
                 schedule.emails = data.emails;
             }
             
@@ -111,17 +111,24 @@ class ScheduleController extends BaseController {
                 schedule.custom_time = data.customTime;
             }
 
+            if (data.method && data.method != '') {
+                schedule.method = data.method;
+            }
+            if (typeof data.body != "undefined") {
+                schedule.body = data.body;
+            }
+
             var status = schedule.save();
             status.then(function () {
                 let scheduleObj = schedule.toJSON();
                 if (schedule.status == 'active') {
                     if (mode === 'create') {
-                        scheduleRunning.create(scheduleObj);
+                        ScheduleService.create(scheduleObj);
                     } else {
-                        scheduleRunning.update(scheduleObj);
+                        ScheduleService.update(scheduleObj);
                     }
                 } else {
-                    scheduleRunning.delete(scheduleObj.id);
+                    ScheduleService.delete(scheduleObj.id);
                 }
             });
 

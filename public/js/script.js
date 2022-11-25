@@ -33,6 +33,13 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         { code: 'active', name: 'Active' },
         { code: 'pending', name: 'Pending' },
     ];
+    $scope.methods = [
+        { code: 'GET', name: 'GET', isBody: false },
+        { code: 'POST', name: 'POST', isBody: true },
+        { code: 'PUT', name: 'PUT', isBody: true },
+        { code: 'PATCH', name: 'PATCH', isBody: true },
+        { code: 'DELETE', name: 'DELETE', isBody: true },
+    ];
 
     var defaultValue = {
         seconds: STAR,
@@ -41,7 +48,8 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         days: STAR,
         months: STAR,
         weekday: STAR,
-        status: $scope.statuses[0].code
+        status: $scope.statuses[0].code,
+        method: $scope.methods[0].code
     };
     $scope.schedule = defaultValue; 
     $scope.customBox = false;
@@ -226,10 +234,10 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
 
     $scope.buildData = function () {
         var retVal = {};
-        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status'];
+        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status', 'method', 'body'];
        
         if (!$scope.schedule.url || $scope.schedule.url == '') {
-            showMessage('Error', 'URL or Command required. Please check again...', 'error', 'glyphicon-remove');
+            showMessage('Error', 'URL required. Please check again...', 'error', 'glyphicon-remove');
             return false;
         }
 
@@ -268,7 +276,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         }
 
         fillable.forEach(function (field) {
-            if ($scope.schedule[field] && $scope.schedule[field] != '') {
+            if (typeof $scope.schedule[field] != "undefined") {
                 retVal[field] = $scope.schedule[field];
             }
         });

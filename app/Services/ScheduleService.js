@@ -6,9 +6,8 @@ const EmailService = use('App/Services/EmailService');
 const schedule = require('node-schedule');
 const request = require('request');
 const Ws = use('Ws');
-global.globalSchedule = {}; global.scheduleRun = [];
 
-class Schedule {
+class ScheduleService {
 
     async run() {
         var data = await ScheduleData.query().where('status', '=', 'active').fetch();
@@ -50,32 +49,38 @@ class Schedule {
             }
             scheduleRun.unshift({
                 runTime: new Date().getDateTime(),
-                runLink: scheduleInfo.url
+                runLink: scheduleInfo.url,
+                method: scheduleInfo.method
             });
             var socket = Ws.getChannel('activitySchedule').topic('activitySchedule');
             if(socket) {
                 socket.broadcast('scheduleRun', scheduleRun);
             }
-            self.requestUrl(scheduleInfo.id, scheduleInfo.url);
+            self.requestUrl(scheduleInfo);
         }.bind(null, scheduleInfo));
     }
 
-    async requestUrl(scheduleId, url) {
+    async requestUrl(scheduleInfo) {
         let requestParams = {
-            uri: url,
+            method: scheduleInfo.method || 'GET',
+            uri: scheduleInfo.url,
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36 - Schedule",
+                "User-Agent": "Mega - Schedule",
                 "Cache-Control": "no-cache, no-store, must-revalidate"
             },
             rejectUnauthorized: false,
             maxRedirects: 5,
             timeout: 10 * 60 * 1000
         };
+        if (['POST', 'PUT', 'PATCH'].indexOf(scheduleInfo.method) > -1 && scheduleInfo.body) {
+            requestParams.json = true;
+            requestParams.body = JSON.parse(scheduleInfo.body);
+        }
 
         let logObj = new LogSchedule;
         let currentTime = new Date().getDateTime();
         logObj.merge({
-            schedule_id: scheduleId,
+            schedule_id: scheduleInfo.id,
             request: '+ Time: ' + currentTime
         });
         await logObj.save();
@@ -86,12 +91,12 @@ class Schedule {
                 responseCode = response.statusCode;
             }
             if (error) {
-                EmailService.sendMail(scheduleId, responseCode, error);
+                EmailService.sendMail(scheduleInfo.id, responseCode, error);
             }
             try {
                 var parseResult = JSON.parse(body);
-                if (responseCode != 200 || (parseResult.status && parseResult.status == "fail")) {
-                    EmailService.sendMail(scheduleId, responseCode, body);
+                if (responseCode != 200 || (parseResult.status && ['fail', 'failed', 'error'].indexOf(parseResult.status) > -1)) {
+                    EmailService.sendMail(scheduleInfo.id, responseCode, body);
                 }
             } catch(err) {}
             
@@ -101,27 +106,30 @@ class Schedule {
 
     writeLog(logObj, response, body, err) {
         let currentTime = new Date().getDateTime();
-        let content = '+ Time: ' + currentTime;
+        let content = ['+ Time: ' + currentTime];
         
         if (response && response.statusCode) {
-            content += '<br />+ Status: ' + response.statusCode;
+            content.push('+ Status: ' + response.statusCode);
             let contentTypes = [];
             if (response.headers['content-type']) {
                 contentTypes = response.headers['content-type'].split(';');
             } 
             if (contentTypes.indexOf('application/json') > -1) {
-                content += '<br />+ Body: ' + body;
+                if (typeof body == 'object') {
+                    content.push('+ Body: ' + JSON.stringify(body));
+                } else {
+                    content.push('+ Body: ' + body);
+                }
             }
         }
-
         if (err) {
-            content += '<br />+ Error: ' + err;
+            content.push('+ Error: ' + err);
         }
 
-        logObj.response = content;
+        logObj.response = content.join('<br />');
         logObj.save();
     }
 
 }
 
-module.exports = new Schedule;
+module.exports = new ScheduleService;

@@ -2,7 +2,9 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
             <h4 class="modal-title">[{title}] - <span ng-if="descriptions" class="text-red">[{descriptions}]</span></h4>
         </div>
         <div class="modal-body">
@@ -10,13 +12,23 @@
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-left">
                     <div class="form-group">
                         <label>Project</label>
-                        <select class="form-control" ng-model="schedule.project_id" ng-options="project.id as project.name for project in projectsForm" ng-change="changeProject(schedule.project_id)">
+                        <select class="form-control" ng-model="schedule.project_id" 
+                                ng-options="project.id as project.name for project in projectsForm" 
+                                ng-change="changeProject(schedule.project_id)">
                             <option value="">-- Select one project --</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>URL <span class="text-danger">*</span></label>
-                        <input type="text" ng-model="schedule.url" class="form-control" placeholder="Link or Command..." />
+                        <input type="text" ng-model="schedule.url" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Method <span class="text-danger">*</span></label>
+                        <select ng-model="schedule.method" class="form-control" ng-options="item.code as item.name for item in methods"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Body <small>(application/json)</small></label>
+                        <textarea rows="5" ng-model="schedule.body" class="form-control" ng-disabled="schedule.method == 'GET' || schedule.method == 'DELETE'"></textarea>
                     </div>
                     <div class="form-group">
                         <label>Status <span class="text-danger">*</span></label>
@@ -29,7 +41,7 @@
                     </div>
                     <div class="form-group">
                         <label>Note</label>
-                        <textarea rows="5" ng-model="schedule.note" class="form-control"></textarea>
+                        <textarea rows="3" ng-model="schedule.note" class="form-control"></textarea>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-right">
@@ -152,7 +164,9 @@
                     <div class="clearfix"></div>
                     <div class="form-group" id="validate-time">
                         <label><input type="checkbox" ng-model="customBox" /> Custom Time </label>
-                        <input type="text" ng-model="schedule.time" ng-keyup="changeScheduleTime(schedule.time)" class="form-control" ng-disabled="!customBox" style="text-align:center; word-spacing: 30px;" placeholder="* * * * * *" />
+                        <input type="text" ng-model="schedule.time" 
+                                            ng-keyup="changeScheduleTime(schedule.time)" class="form-control" 
+                                            ng-disabled="!customBox" style="text-align:center; word-spacing: 30px;" placeholder="* * * * * *" />
                     </div>
                     <div class="structure-schedule">
                         <span ng-click="hoverRule = 'seconds'" ng-class="hoverRule == 'seconds' ? 'active' : ''">Seconds</span>
