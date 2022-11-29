@@ -65,7 +65,7 @@ class ScheduleService {
             method: scheduleInfo.method || 'GET',
             uri: scheduleInfo.url,
             headers: {
-                "User-Agent": "Mega - Schedule",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 (MegaAds - Schedule)",
                 "Cache-Control": "no-cache, no-store, must-revalidate"
             },
             rejectUnauthorized: false,
