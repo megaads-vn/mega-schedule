@@ -93,13 +93,17 @@ class ScheduleService {
             if (error) {
                 EmailService.sendMail(scheduleInfo.id, responseCode, error);
             }
+
             try {
                 var parseResult = JSON.parse(body);
-                if (responseCode != 200 || (parseResult.status && ['fail', 'failed', 'error'].indexOf(parseResult.status) > -1)) {
+                if (parseResult.status && ['fail', 'failed', 'error'].indexOf(parseResult.status) > -1) {
                     EmailService.sendMail(scheduleInfo.id, responseCode, body);
                 }
             } catch(err) {}
-            
+
+            if (responseCode != 200) {
+                EmailService.sendMail(scheduleInfo.id, responseCode, body);
+            }
             this.writeLog(logObj, response, body, error);
         });
     }
