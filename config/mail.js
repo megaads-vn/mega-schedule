@@ -3,9 +3,6 @@
 const Env = use('Env')
 
 module.exports = {
-
-  send: Env.get('MAIL_SEND', 'on'),
-
   receivers: [
     {
       email: 'kieutuananh1995@gmail.com',
@@ -48,7 +45,7 @@ module.exports = {
     pool: true,
     port: Env.get('SMTP_PORT'),
     host: Env.get('SMTP_HOST'),
-    secure: false,
+    secure: true,
     auth: {
       user: Env.get('MAIL_USERNAME'),
       pass: Env.get('MAIL_PASSWORD')
