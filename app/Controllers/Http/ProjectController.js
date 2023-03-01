@@ -27,7 +27,7 @@ class ProjectController extends BaseController {
                 }
                 retVal.pageId = pageId;
                 retVal.pageSize = pageSize;
-                query.forPage(pageId + 1, pageSize).orderBy('id', 'desc');
+                query.forPage(pageId + 1, pageSize).orderBy('name', 'ASC');
             }
             retVal.data = await query.fetch();
         }
