@@ -3,7 +3,6 @@
 const axios = require('axios');
 const Env = use('Env');
 const Config = use('Config');
-const Request = use('Request');
 const User = use('App/Models/User');
 
 class HomeController {
@@ -61,7 +60,7 @@ class HomeController {
     }
 
     async ssoCallback({ request, response, session, auth }) {
-        const current = new Date();
+        let message = 'Callback: Unauthorized';
         const appId = this.ssoConfig.app_id;
         const ssoAuthUrl = this.ssoConfig.auth_url;
         const token =  request.input('token');
@@ -69,26 +68,27 @@ class HomeController {
         const ip = request.ip();
         const domain = request.hostname();
         let fullAuthUrl = `${ssoAuthUrl}?token=${token}&app_id=${appId}&ip=${ip}&user_agent=${userAgent}&domain=${domain}`;
-            try {
-                const result = await axios.get(fullAuthUrl, {
-                    httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
-                });
-                const res = result.data;
-                if (res.status === 'success') {
-                    const user = res.user;
-                    const existsUser = await this.checkExistsUser(user.email);
-                    if (existsUser) {
-                        session.put('token', token);
-                        await this.updateUserToken(existsUser.id, token);
-                        if (!auth.check()) {
-                            await auth.login(existsUser);
-                        }
-                        return response.route('listSchedule');
+        try {
+            const result = await axios.get(fullAuthUrl, {
+                httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
+            });
+            const res = result.data;
+            if (res.status === 'success') {
+                const user = res.user;
+                const existsUser = await this.checkExistsUser(user.email);
+                if (existsUser) {
+                    session.put('token', token);
+                    await this.updateUserToken(existsUser.id, token);
+                    if (!auth.check()) {
+                        await auth.login(existsUser);
                     }
+                    return response.route('listSchedule');
                 }
-            } catch (error) {
-                console.error('Error fetching data:', error);
             }
+        } catch (error) {
+            message = 'Has error when processing callback';
+            console.error('Error fetching data:', error);
+        }
         session.clear();
         if (auth.check()) {
             await auth.logout();
