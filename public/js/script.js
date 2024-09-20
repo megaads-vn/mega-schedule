@@ -26,6 +26,13 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
     $scope.project = {};
     $scope.projects = []; $scope.projectsForm = [];
     $scope.limits = [10, 20, 50, 70, 100, 200, 250];
+    $scope.checkAllListSchedule = false;
+    $scope.scheduleActionStatus = {};
+    $scope.scheduleActionStatuses = [
+        { code: '', name: 'Choose Action' },
+        { code: 'active', name: 'Active' },
+        { code: 'pending', name: 'Pending' },
+    ];
     $scope.log = {
         limit: $scope.limits[0]
     };
@@ -55,6 +62,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
     $scope.customBox = false;
 
     $scope.init = async function () {
+        $scope.scheduleActionStatus = $scope.scheduleActionStatuses[0];
         $scope.fetchProject();
         $scope.find();
     }
@@ -449,40 +457,84 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         });
     }
 
+    $scope.checkAllScheduleHandler = function () {
+        $scope.checkAllListSchedule = !$scope.checkAllListSchedule;
+        $scope.schedules = $scope.schedules.map(function (item) {
+            item.checked = !item.checked;
+            return item;
+        });
+    }
+
+    $scope.changeListStatusHandler = function() {
+        const ids = $scope.schedules.filter(function (item) {
+            return item.checked;
+        }).map(function (item) {
+            return item.id;
+        });
+        const changedStatus = $scope.scheduleActionStatus;
+        const checkConfirm = confirm(`Do you want to change status of ${ids.length} selected schedules to '${changedStatus.name}'?`);
+        if (checkConfirm && ids.length > 0) {
+            $http.post('/service/schedule/change-status', {ids: ids, status: changedStatus.code})
+                .then(function (response) {
+                    const res = response.data;
+                    $scope.checkAllListSchedule = false;
+                    $scope.scheduleActionStatus = $scope.scheduleActionStatuses[0];
+                    if (res.status == 'successful') {
+                        $scope.schedules = $scope.schedules.map(function (item) {
+                            if (item.checked) {
+                                item.status = changedStatus.code;
+                                item.checked = false;
+                            }
+                            return item;
+                        });
+                        showMessage('Success!', 'Change Status successful', 'success', 'glyphicon-remove');
+                    } else {
+                        showMessage('Error!', res.message, 'error', 'glyphicon-remove');
+                        $scope.schedules = $scope.schedules.map(function (item) {
+                            if (item.checked) {
+                                item.checked = false;
+                            }
+                            return item;
+                        });
+                    }
+                });
+        }
+    }
+
 
     $scope.init();
 
     /* ------------------------- WEB SOCKET ---------------------- */
-    var ws = adonis.Ws().connect();
+    // var ws = adonis.Ws().connect();
 
-    ws.on('open', () => {
-        const activity = ws.subscribe('activitySchedule');
+    // ws.on('open', () => {
+    //     const activity = ws.subscribe('activitySchedule');
 
-        activity.on('socketId', (id) => {
-            console.log('Subscribe Activity Schedule Event as SocketId:', id);
-        });
+    //     activity.on('socketId', (id) => {
+    //         console.log('Subscribe Activity Schedule Event as SocketId:', id);
+    //     });
 
-        activity.on('error', (error) => {
-            console.log("Activity Error", error);
-        });
+    //     activity.on('error', (error) => {
+    //         console.log("Activity Error", error);
+    //     });
 
-        activity.on('close', () => {
-            console.log('Unsubscribe Activity Schedule Event...');
-        });
+    //     activity.on('close', () => {
+    //         console.log('Unsubscribe Activity Schedule Event...');
+    //     });
 
-        activity.on('scheduleRun', (data) => {
-            $scope.runs = angular.copy(data);
-            $scope.$apply();
-        });
-    })
+    //     activity.on('scheduleRun', (data) => {
+    //         $scope.runs = angular.copy(data);
+    //         $scope.$apply();
+    //     });
+    // })
 
-    ws.on('error', () => {
-        console.log('Error Connect Web Socket!');
-    });
+    // ws.on('error', () => {
+    //     console.log('Error Connect Web Socket!');
+    // });
 
-    ws.on('close', () => {
-        console.log('Disconnect Web Socket!');
-    });
+    // ws.on('close', () => {
+    //     console.log('Disconnect Web Socket!');
+    // });
 
 });
 

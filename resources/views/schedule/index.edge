@@ -1,5 +1,21 @@
 @layout('layout.master')
 
+@section('stylesheet')
+    @super
+    <style>
+        .status-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            height: 35px;
+            width: 20%;
+        }
+        .status-action-option {
+            margin-right: 10px;
+        }
+    </style>
+@endsection
 @section('javascript')
 	@super
     {{ script('/js/polyfill.min.js' + '?v=' + config('app.version')) }}
@@ -24,9 +40,17 @@
                     <div class="panel-body">
                         @include('schedule.filter')
                         <div class="table-responsive">
-                            <table class="table table-hover table-bordered no-margin-bottom">
+                            <div class="pull-left status-action">
+                                <select ng-options="item.name for item in scheduleActionStatuses" ng-model="scheduleActionStatus"
+                                    class="form-control status-action-option" ng-disabled="!checkAllListSchedule"></select>
+                                <button type="button" class="btn btn-success" ng-disabled="!checkAllListSchedule" ng-click="changeListStatusHandler()">Save</button>
+                            </div>
+                            <table class="table table-hover table-bordered no-margin-bottom" id="schedule-list">
                                 <thead>
                                     <tr>
+                                        <th class="text-center vertical-align" style="width: 5%">
+                                            <input type="checkbox" id="schedule-check-all" ng-model="checkAllListSchedule" ng-click="checkAllScheduleHandler()" title="Check All"/>
+                                        </th>
                                         <th class="text-center vertical-align" style="width: 5%">Index</th>
                                         <th class="col-md-5 text-center vertical-align">Schedule</th>
                                         <th class="col-md-2 text-center vertical-align">Status</th>
@@ -41,7 +65,12 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="item in schedules track by $index">
-                                        <td class="vertical-align text-center">[{$index + 1}]</td>
+                                        <td class="vertical-align text-center">
+                                            <input type="checkbox" ng-model="item.checked" />
+                                        </td>
+                                        <td class="vertical-align text-center">
+                                            [{$index + 1}]
+                                        </td>
                                         <td class="vertical-align schedule-info">
                                             <p>Time: [{item.run_at}]</p>
                                             <p>URL: <a href="[{item.url}]" target="_blank">[{item.url}]</a></p>

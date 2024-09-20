@@ -28,6 +28,7 @@ Route.group(() => {
     Route.get('schedule/find', 'ScheduleController.find').as('findSchedule');
     Route.post('schedule/create', 'ScheduleController.create').as('createSchedule');
     Route.patch('schedule/update/:id', 'ScheduleController.update').as('updateSchedule');
+    Route.post('schedule/change-status', 'ScheduleController.changeStatus').as('changeStatusSchedule');
     Route.delete('schedule/delete/:id', 'ScheduleController.delete').as('deleteSchedule');
     Route.get('schedule/history/:id', 'ScheduleController.history').as('historySchedule');
 

@@ -84,6 +84,26 @@ class ScheduleController extends BaseController {
         response.json(result);
     }
 
+    async changeStatus({ request, response }) {
+        let result = this.getDefaultStatus();
+        let statusCode = 200;
+        try {
+            const data = request.all();
+            if (data.ids && data.ids != '' && data.status && data.status != '') {
+                await Schedule.query().whereIn('id', data.ids).update({ status: data.status });
+                result = this.getSuccessStatus();
+            } else {
+                result.message = 'Invalid data';
+                statusCode = 400;
+            }
+        } catch (e) {
+            console.error(e);
+            result.message = 'Has error when change status';
+            statusCode = 500;
+        }
+        return response.status(statusCode).json(result);
+    }
+
     buildData(data, schedule, mode = 'create') {
         var result = this.getDefaultStatus();
 
