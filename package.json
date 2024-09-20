@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node ace test"
+    "test": "node ace test",
+    "dev": "nodemon server.js"
   },
   "keywords": [
     "adonisjs",
@@ -29,12 +30,15 @@
     "@adonisjs/session": "^1.0.25",
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/websocket": "^1.0.11",
+    "axios": "^1.7.7",
     "mysql": "^2.16.0",
     "node-schedule": "^1.1.1",
     "request": "^2.74.0"
   },
-  "devDependencies": {},
   "autoload": {
     "App": "./app"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.5"
   }
 }

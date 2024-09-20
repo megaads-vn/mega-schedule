@@ -18,7 +18,11 @@ const Route = use('Route')
 
 Route.get('/', 'HomeController.index').as('home');
 Route.post('/authenticate', 'HomeController.authenticate').as('authenticate');
-Route.get('/schedule', 'ScheduleController.index').as('listSchedule').middleware(['token']);
+Route.get('/schedule', 'ScheduleController.index').as('listSchedule').middleware(['system']);
+Route.get('/sso', 'HomeController.ssoLogin').as('ssoLogin');
+Route.get('/sso/callback', 'HomeController.ssoCallback').as('ssoCallback');
+Route.post('/sso/postback', 'HomeController.ssoPostBack').as('ssoPostback');
+Route.get('/logout', 'HomeController.logout').as('logout');
 
 Route.group(() => {
     Route.get('schedule/find', 'ScheduleController.find').as('findSchedule');

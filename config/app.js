@@ -208,6 +208,14 @@ module.exports = {
       level: 'info'
     }
   },
+  sso: {
+    enable: Env.get('SSO_ENABLE', false),
+    app_id: Env.get('SSO_APP_ID', 9),
+    login_url: Env.get('SSO_LOGIN', ''),
+    logout_url: Env.get('SSO_LOGOUT', ''),
+    callback_url: Env.get('SSO_CALLBACK', ''),
+    auth_url: Env.get('SSO_AUTH', ''),
+  },
 
   version: '07042022'
 }

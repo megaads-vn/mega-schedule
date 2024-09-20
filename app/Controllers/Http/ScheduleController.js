@@ -7,7 +7,7 @@ const ScheduleService = use('App/Services/ScheduleService');
 
 class ScheduleController extends BaseController {
 
-    index({ view }) {
+    async index({ view, response, session, auth }) {
         var data = {
             seconds: this.range(1, 60),
             minutes: this.range(1, 60),

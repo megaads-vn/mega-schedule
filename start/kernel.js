@@ -45,7 +45,9 @@ const globalMiddleware = [
 */
 const namedMiddleware = {
   auth: 'Adonis/Middleware/Auth',
-  token: 'App/Middleware/Token'
+  token: 'App/Middleware/Token',
+  system: 'App/Middleware/SystemAuth',
+  disableCsrf: 'App/Middleware/DisableCsrf'
 }
 
 /*
