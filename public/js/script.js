@@ -505,36 +505,36 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
     $scope.init();
 
     /* ------------------------- WEB SOCKET ---------------------- */
-    // var ws = adonis.Ws().connect();
+    var ws = adonis.Ws().connect();
 
-    // ws.on('open', () => {
-    //     const activity = ws.subscribe('activitySchedule');
+    ws.on('open', () => {
+        const activity = ws.subscribe('activitySchedule');
 
-    //     activity.on('socketId', (id) => {
-    //         console.log('Subscribe Activity Schedule Event as SocketId:', id);
-    //     });
+        activity.on('socketId', (id) => {
+            console.log('Subscribe Activity Schedule Event as SocketId:', id);
+        });
 
-    //     activity.on('error', (error) => {
-    //         console.log("Activity Error", error);
-    //     });
+        activity.on('error', (error) => {
+            console.log("Activity Error", error);
+        });
 
-    //     activity.on('close', () => {
-    //         console.log('Unsubscribe Activity Schedule Event...');
-    //     });
+        activity.on('close', () => {
+            console.log('Unsubscribe Activity Schedule Event...');
+        });
 
-    //     activity.on('scheduleRun', (data) => {
-    //         $scope.runs = angular.copy(data);
-    //         $scope.$apply();
-    //     });
-    // })
+        activity.on('scheduleRun', (data) => {
+            $scope.runs = angular.copy(data);
+            $scope.$apply();
+        });
+    })
 
-    // ws.on('error', () => {
-    //     console.log('Error Connect Web Socket!');
-    // });
+    ws.on('error', () => {
+        console.log('Error Connect Web Socket!');
+    });
 
-    // ws.on('close', () => {
-    //     console.log('Disconnect Web Socket!');
-    // });
+    ws.on('close', () => {
+        console.log('Disconnect Web Socket!');
+    });
 
 });
 
