@@ -19,6 +19,7 @@ const Route = use('Route')
 Route.get('/', 'HomeController.index').as('home');
 Route.post('/authenticate', 'HomeController.authenticate').as('authenticate');
 Route.get('/schedule', 'ScheduleController.index').as('listSchedule').middleware(['token']);
+Route.post('/service/upload', 'FileController.upload');
 
 Route.group(() => {
     Route.get('schedule/find', 'ScheduleController.find').as('findSchedule');

@@ -7,7 +7,7 @@
     <title>List - Mega Schedule</title>
     <link rel="shortcut icon" href="{{ assetsUrl('images/schedule.png') }}">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ assetsUrl('images/schedule.png') }}">
-    
+
     @section('stylesheet')
     {{ style('css/bootstrap.min.css' + '?v=' + config('app.version')) }}
     {{ style('css/bootstrap-theme.min.css' + '?v=' + config('app.version')) }}
@@ -30,6 +30,8 @@
     {{ script('/js/bootstrap.min.js' + '?v=' + config('app.version')) }}
     {{ script('/js/pnotify.custom.min.js' + '?v=' + config('app.version')) }}
     {{ script('/js/angular.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/ng-file-upload-shim.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/ng-file-upload.min.js' + '?v=' + config('app.version')) }}
     {{ script('/js/angular-sanitize.min.js' + '?v=' + config('app.version')) }}
     {{ script('/js/base-controller.js' + '?v=' + config('app.version')) }}
     @endsection
