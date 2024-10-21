@@ -61,7 +61,11 @@ class ScheduleService {
             if(socket) {
                 socket.broadcast('scheduleRun', scheduleRun);
             }
-            self.requestUrlV2(scheduleInfo);
+            if (scheduleInfo.ip_request) {
+                self.requestUrlV2(scheduleInfo);
+            } else {
+                self.requestUrl(scheduleInfo);
+            }
         }.bind(null, scheduleInfo));
     }
 
