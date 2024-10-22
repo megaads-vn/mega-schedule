@@ -8,9 +8,6 @@ const request = require('request');
 const Ws = use('Ws');
 const axios = require('axios');
 const https = require('https');
-const agent = new https.Agent({
-    rejectUnauthorized: false
-});
 
 class ScheduleService {
 
@@ -118,6 +115,7 @@ class ScheduleService {
     }
 
     async requestUrlV2(scheduleInfo) {
+        const url = new URL(scheduleInfo.url);
         let requestParams = {
             method: scheduleInfo.method || 'GET',
             url: scheduleInfo.url,
@@ -125,8 +123,14 @@ class ScheduleService {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 (MegaAds - Schedule)",
                 "Cache-Control": "no-cache, no-store, must-revalidate",
                 "Content-Type": "application/json",
+                "Host": url.hostname
             },
-            httpsAgent: agent,
+            httpsAgent: new https.Agent({
+                rejectUnauthorized: false,
+                host: scheduleInfo.ip_request,
+                port: 443,
+                path: '/'
+            }),
             maxRedirects: 5,
             timeout: 10 * 60 * 1000
         };
@@ -145,21 +149,7 @@ class ScheduleService {
         let body = '';
         let error = null;
         try {
-            if (scheduleInfo.ip_request) {
-                let ipFamily = this.getIPVersion(scheduleInfo.ip_request);
-                const instance = axios.create({
-                    httpsAgent: new https.Agent({
-                        family: ipFamily, // Sử dụng IPv4. Nếu IP là IPv6, sử dụng family: 6
-                        lookup: (hostname, options, callback) => {
-                            // Bỏ qua hostname gốc và sử dụng IP mà bạn đã chỉ định
-                            callback(null, scheduleInfo.ip_request, options.family);
-                        }
-                    })
-                });
-                response = await instance(requestParams);
-            } else {
-                response = await axios(requestParams);
-            }
+            response = await axios(requestParams);
             let responseCode = 500;
             if (response.status) {
                 responseCode = response.status;
