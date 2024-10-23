@@ -39,6 +39,7 @@
                     </div>
                     <div class="panel-body">
                         @include('schedule.filter')
+                        @include('schedule.import')
                         <div class="table-responsive">
                             <div class="pull-left status-action">
                                 <select ng-options="item.name for item in scheduleActionStatuses" ng-model="scheduleActionStatus"
@@ -143,6 +144,6 @@
         @include('schedule.log')
         @include('project.form')
     </div>
-    
+
 @endsection
 

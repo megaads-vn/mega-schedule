@@ -77,7 +77,7 @@ class ScheduleController extends BaseController {
                                         .offset(parseInt(request.input('offset', 0)))
                                         .orderBy('id', 'desc')
                                         .fetch();
-                                        
+
             result = this.getSuccessStatus();
             result.data = logs;
         }
@@ -126,7 +126,7 @@ class ScheduleController extends BaseController {
             if (typeof data.emails != "undefined") {
                 schedule.emails = data.emails;
             }
-            
+
             if (data.customTime && data.customTime != '') {
                 schedule.custom_time = data.customTime;
             }
@@ -136,6 +136,9 @@ class ScheduleController extends BaseController {
             }
             if (typeof data.body != "undefined") {
                 schedule.body = data.body;
+            }
+            if (typeof data.ip_request != "undefined") {
+                schedule.ip_request = data.ip_request;
             }
 
             var status = schedule.save();

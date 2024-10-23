@@ -12,8 +12,8 @@
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-left">
                     <div class="form-group">
                         <label>Project</label>
-                        <select class="form-control" ng-model="schedule.project_id" 
-                                ng-options="project.id as project.name for project in projectsForm" 
+                        <select class="form-control" ng-model="schedule.project_id"
+                                ng-options="project.id as project.name for project in projectsForm"
                                 ng-change="changeProject(schedule.project_id)">
                             <option value="">-- Select one project --</option>
                         </select>
@@ -42,6 +42,10 @@
                     <div class="form-group">
                         <label>Note</label>
                         <textarea rows="3" ng-model="schedule.note" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Request via ip</label>
+                        <input type="text" ng-model="schedule.ip_request" class="form-control" placeholder="Enter ip request" />
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-right">
@@ -164,8 +168,8 @@
                     <div class="clearfix"></div>
                     <div class="form-group" id="validate-time">
                         <label><input type="checkbox" ng-model="customBox" /> Custom Time </label>
-                        <input type="text" ng-model="schedule.time" 
-                                            ng-keyup="changeScheduleTime(schedule.time)" class="form-control" 
+                        <input type="text" ng-model="schedule.time"
+                                            ng-keyup="changeScheduleTime(schedule.time)" class="form-control"
                                             ng-disabled="!customBox" style="text-align:center; word-spacing: 30px;" placeholder="* * * * * *" />
                     </div>
                     <div class="structure-schedule">

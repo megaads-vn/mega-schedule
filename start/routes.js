@@ -23,6 +23,7 @@ Route.get('/sso', 'HomeController.ssoLogin').as('ssoLogin');
 Route.get('/sso/callback', 'HomeController.ssoCallback').as('ssoCallback');
 Route.post('/sso/postback', 'HomeController.ssoPostBack').as('ssoPostback');
 Route.get('/logout', 'HomeController.logout').as('logout');
+Route.post('/service/upload', 'FileController.upload');
 
 Route.group(() => {
     Route.get('schedule/find', 'ScheduleController.find').as('findSchedule');

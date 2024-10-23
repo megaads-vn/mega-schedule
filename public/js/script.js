@@ -14,15 +14,30 @@ $(document).ready(function () {
         }
     });
 });
+system.requires.push("ngFileUpload");
+system.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
 
-system.controller('ScheduleController', function ($scope, $timeout, $http) {
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+system.controller('ScheduleController', function ($scope, $timeout, $http, Upload) {
 
     this.prototype = new BaseController($scope);
 
     $scope.pageId = 0; $scope.pageSize = 20;
-    $scope.schedules = []; $scope.filter = {}; 
+    $scope.schedules = []; $scope.filter = {};
     $scope.logs = []; const STAR = '*';
-    $scope.runs = []; $scope.hoverRule = 'weeks'; 
+    $scope.runs = []; $scope.hoverRule = 'weeks';
     $scope.project = {};
     $scope.projects = []; $scope.projectsForm = [];
     $scope.limits = [10, 20, 50, 70, 100, 200, 250];
@@ -48,6 +63,8 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         { code: 'DELETE', name: 'DELETE', isBody: true },
     ];
 
+    $scope.error = '';
+
     var defaultValue = {
         seconds: STAR,
         minutes: STAR,
@@ -58,7 +75,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         status: $scope.statuses[0].code,
         method: $scope.methods[0].code
     };
-    $scope.schedule = defaultValue; 
+    $scope.schedule = defaultValue;
     $scope.customBox = false;
 
     $scope.init = async function () {
@@ -125,7 +142,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
                 retVal[field] = $scope.filter[field];
             }
         });
-        
+
         return retVal;
     }
 
@@ -207,7 +224,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
         } else if (checkPush > 0) {
             retVal.push(STAR);
         }
-        
+
         if (isReturn) {
             return retVal.join(' ');
         } else {
@@ -242,8 +259,8 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
 
     $scope.buildData = function () {
         var retVal = {};
-        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status', 'method', 'body'];
-       
+        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status', 'method', 'body', 'ip_request'];
+
         if (!$scope.schedule.url || $scope.schedule.url == '') {
             showMessage('Error', 'URL required. Please check again...', 'error', 'glyphicon-remove');
             return false;
@@ -499,6 +516,43 @@ system.controller('ScheduleController', function ($scope, $timeout, $http) {
                     }
                 });
         }
+    }
+
+    $scope.importSchedule = function () {
+        $scope.file = null;
+        $('#importSchedule').modal('show');
+    }
+
+    $scope.saveImportDate = function () {
+        $('.loading').show();
+        let fileData = $scope.file;
+        if (fileData === undefined || fileData === null) {
+            $scope.error = 'Please select file template';
+            $('.loading').hide();
+        } else {
+            Upload.upload({
+                url: '/service/upload',
+                data: {file: fileData}
+            }).then(function (resp) {
+                $('.loading').hide();
+                let response = resp.data;
+                if (response.status == 'successful') {
+                    $scope.error = '';
+                    $('#importSchedule').modal('hide');
+                    $scope.find();
+                } else {
+                    $scope.error = response.message;
+                }
+            }, function (resp) {
+                $('.loading').hide();
+                $scope.error = resp.data.message;
+                throw new Error('Upload failed: ' + resp.data.message);
+            });
+        }
+    }
+    $scope.closeImportSchedule = function () {
+        $scope.file = null;
+        $scope.error = '';
     }
 
 
