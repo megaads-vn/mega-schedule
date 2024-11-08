@@ -39,19 +39,25 @@ class FileController {
             if (isValidHeader) {
                 data.forEach((item, index) => {
                     let schedule = new Schedule();
+                    let url = item["2"];
+                    if (item["2"] instanceof Object) {
+                        url = item["2"].text;
+                    }
                     schedule.note = item["1"];
-                    schedule.url = item["2"];
+                    schedule.url = url;
                     schedule.run_at = item["3"];
                     schedule.project_id = item["4"];
                     schedule.method = item["5"];
                     schedule.body = item["6"];
                     schedule.status = item["7"];
                     schedule.ip_request = item["8"];
-                    let status = schedule.save();
-                    status.then(function () {
-                        let scheduleObj = schedule.toJSON();
-                        ScheduleService.create(scheduleObj);
-                    });
+                    if (schedule.url !== null && schedule.url !== '' && schedule.run_at !== null && schedule.run_at !== '') {
+                        let status = schedule.save();
+                        status.then(function () {
+                            let scheduleObj = schedule.toJSON();
+                            ScheduleService.create(scheduleObj);
+                        });
+                    }
                 });
                 result = {
                     status: 'successful',
