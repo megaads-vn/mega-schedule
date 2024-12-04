@@ -92,6 +92,19 @@ class ScheduleController extends BaseController {
             if (data.ids && data.ids != '' && data.status && data.status != '') {
                 await Schedule.query().whereIn('id', data.ids).update({ status: data.status });
                 result = this.getSuccessStatus();
+                if (data.status == 'active') {
+                    let schedules = await Schedule.query().whereIn('id', data.ids).fetch();
+                    schedules = schedules.toJSON();
+                    schedules.forEach(schedule => {
+                        ScheduleService.create(schedule);
+                    });
+                } else {
+                    let schedules = await Schedule.query().whereIn('id', data.ids).fetch();
+                    schedules = schedules.toJSON();
+                    schedules.forEach(schedule => {
+                        ScheduleService.delete(schedule.id);
+                    });
+                }
             } else {
                 result.message = 'Invalid data';
                 statusCode = 400;

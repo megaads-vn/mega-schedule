@@ -88,8 +88,8 @@ class HomeController {
         } catch (error) {
             message = 'Has error when processing callback';
             console.error('Error fetching data:', error);
+            session.clear();
         }
-        session.clear();
         if (auth.check()) {
             await auth.logout();
         }
