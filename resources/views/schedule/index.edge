@@ -54,7 +54,7 @@
                                         </th>
                                         <th class="text-center vertical-align" style="width: 5%">Index</th>
                                         <th class="col-md-5 text-center vertical-align">Schedule</th>
-                                        <th class="col-md-2 text-center vertical-align">Status</th>
+                                        <th class="col-md-1 text-center vertical-align">Status</th>
                                         <th class="col-md-2 text-center vertical-align">Project</th>
                                         <th class="col-md-1 text-center vertical-align">Create<br />Update</th>
                                         <th class="text-center vertical-align">
@@ -100,6 +100,9 @@
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-danger" ng-click="delete(item)" title="Delete Item">
                                                     <span class="glyphicon glyphicon-trash"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-info" ng-click="requestNow(item)" title="Send now">
+                                                    <span class="glyphicon glyphicon-send"></span>
                                                 </button>
                                             </div>
                                         </td>

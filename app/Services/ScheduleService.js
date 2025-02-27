@@ -31,6 +31,17 @@ class ScheduleService {
         }
     }
 
+    async runNow(scheduleId) {
+        var data = await ScheduleData.query().where('id', '=', scheduleId).firstOrFail();
+        var scheduleInfo = data.toJSON();
+        if (scheduleInfo.ip_request) {
+            await this.requestUrlV2(scheduleInfo);
+        } else {
+            await this.requestUrl(scheduleInfo);
+        }
+        return data;
+    }
+
     update(scheduleInfo) {
         if(typeof(scheduleInfo.id) != "undefined" && typeof(globalSchedule[scheduleInfo.id]) != 'undefined') {
             try {

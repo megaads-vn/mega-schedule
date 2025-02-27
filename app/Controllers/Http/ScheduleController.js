@@ -67,7 +67,13 @@ class ScheduleController extends BaseController {
         }
         response.json(result);
     }
-
+    async requestNow({ params, response }) {
+        var result = this.getDefaultStatus();
+        if (params.id && params.id != '') {
+           result = await ScheduleService.runNow(params.id);
+        }
+        response.json(result);
+    }
     async history({ params, request, response }) {
         var result = this.getDefaultStatus();
         if(params.id && params.id != '') {

@@ -171,6 +171,17 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         }
     }
 
+    $scope.requestNow = function (item) {
+            $('.loading').show();
+            $http.get('/service/schedule/run/' + item.id).then(function (response) {
+                showMessage('Success!', 'Sending...', 'success', 'glyphicon-remove');
+                $('.loading').hide();
+            }, function (error) {
+                $('.loading').hide();
+                showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
+            });
+    }
+
     $scope.search = function () {
         $scope.pageId = 0;
         $scope.find();
