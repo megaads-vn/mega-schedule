@@ -18,7 +18,6 @@ class HomeController {
         if (this.ssoConfig.enable == 'true' && (typeof userToken == 'undefined' || !userToken)) {
             return response.route('ssoLogin');
         } else if (this.ssoConfig.enable == 'true' && typeof userToken != 'undefined' && userToken !== '') {
-            console.log('previous= ', request.header('Referer'));
             return response.route('listSchedule');
         } else if (this.ssoConfig.enable == 'false') {
             if(typeof(userToken) != 'undefined' && userToken != '' && userToken != null) {

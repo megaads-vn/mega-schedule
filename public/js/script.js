@@ -509,6 +509,9 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
             }
             return item;
         });
+        if (!$scope.checkAllListSchedule) {
+            $scope.hasItemChecked = false;
+        }
     }
 
     $scope.changeSelectedState = function() {
