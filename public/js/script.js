@@ -34,14 +34,17 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
 
     this.prototype = new BaseController($scope);
 
-    $scope.pageId = 0; $scope.pageSize = 20;
-    $scope.schedules = []; $scope.filter = {};
+    $scope.pageId = 0; 
+    $scope.pageSize = 20;
+    $scope.schedules = []; 
+    $scope.filter = {};
     $scope.logs = []; const STAR = '*';
     $scope.runs = []; $scope.hoverRule = 'weeks';
     $scope.project = {};
     $scope.projects = []; $scope.projectsForm = [];
     $scope.limits = [10, 20, 50, 70, 100, 200, 250];
     $scope.checkAllListSchedule = false;
+    $scope.hasItemChecked = false;
     $scope.scheduleActionStatus = {};
     $scope.scheduleActionStatuses = [
         { code: '', name: 'Choose Action' },
@@ -118,7 +121,10 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         $('.loading').show();
         $http.get('/service/schedule/find?' + $.param($scope.buildFilterData())).then(function (response) {
             if (response.data.status == "successful") {
-                $scope.schedules = response.data.data;
+                $scope.schedules = response.data.data.map(function (item) {
+                    item.checked = false;
+                    return item;
+                });
                 $scope.pagesCount = response.data.pagesCount;
             } else {
                 $scope.schedules = [];
@@ -257,13 +263,23 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
             httpRequest.then(function (response) {
                 if (response.data.status == "successful") {
                     $('#formSchedule').modal('hide');
+                    showMessage('Success', response.data.message, 'success');
                     $scope.find();
                 } else {
                     $('.btnSave').button('reset');
-                    showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');
+                    let message = 'An error occurred during data transfer. Please try again...';
+                    if (response.data.message) {
+                        message = response.data.message;
+                    }
+                    showMessage('Error', message, 'error', 'glyphicon-remove');
                 }
             }, function (error) {
                 $('.btnSave').button('reset');
+                let message = 'An error occurred during data transfer. Please try again...';
+                if (error.data.message) {
+                        message = error.data.message;
+                    }
+                    showMessage('Error', message, 'error', 'glyphicon-remove');
             });
         }
     }
@@ -488,9 +504,16 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
     $scope.checkAllScheduleHandler = function () {
         $scope.checkAllListSchedule = !$scope.checkAllListSchedule;
         $scope.schedules = $scope.schedules.map(function (item) {
-            item.checked = !item.checked;
+            if (item.checked != $scope.checkAllListSchedule) { 
+                item.checked = $scope.checkAllListSchedule;
+            }
             return item;
         });
+    }
+
+    $scope.changeSelectedState = function() {
+        var totalSelected = $scope.schedules.filter((item) => item.checked).length;
+        $scope.hasItemChecked = totalSelected > 0;
     }
 
     $scope.changeListStatusHandler = function() {
@@ -506,6 +529,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
                 .then(function (response) {
                     const res = response.data;
                     $scope.checkAllListSchedule = false;
+                    $scope.hasItemChecked = false;
                     $scope.scheduleActionStatus = $scope.scheduleActionStatuses[0];
                     if (res.status == 'successful') {
                         $scope.schedules = $scope.schedules.map(function (item) {

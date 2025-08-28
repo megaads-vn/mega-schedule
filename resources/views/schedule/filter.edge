@@ -15,9 +15,9 @@
             </div>
         </div>
         <div class="col-md-3" style="margin-bottom: 5px;">
-            <div class="form-group">
+            <div class="form-group form-chosen">
                 <label>Project &nbsp;</label>
-                <select class="form-control" ng-model="filter.project_id" ng-options="project.id as project.name for project in projects">
+                <select chosen class="form-control" ng-model="filter.project_id" ng-options="project.id as project.name for project in projects">
                     <option value="">All Project</option>
                 </select>
             </div>

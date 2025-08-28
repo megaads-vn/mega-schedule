@@ -12,6 +12,9 @@
     {{ style('css/bootstrap.min.css' + '?v=' + config('app.version')) }}
     {{ style('css/bootstrap-theme.min.css' + '?v=' + config('app.version')) }}
     {{ style('css/custom.css' + '?v=' + config('app.version')) }}
+    {{ style('css/chosen.min.css') }}
+    <link rel="image_src" href="image/chosen-sprite.png">
+
     @endsection
 
 </head>
@@ -27,6 +30,7 @@
 
     @section('javascript')
     {{ script('/js/jquery.min.js' + '?v=' + config('app.version')) }}
+    {{ script('/js/chosen.jquery.min.js') }}
     {{ script('/js/bootstrap.min.js' + '?v=' + config('app.version')) }}
     {{ script('/js/pnotify.custom.min.js' + '?v=' + config('app.version')) }}
     {{ script('/js/angular.min.js' + '?v=' + config('app.version')) }}

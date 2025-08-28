@@ -39,4 +39,6 @@ Route.group(() => {
     Route.patch('project/update/:id', 'ProjectController.update').as('findProject');
     Route.delete('project/delete/:id', 'ProjectController.delete').as('findProject');
 
-}).prefix('service').middleware(['token']);
+})
+.prefix('service')
+.middleware(['token']);

@@ -1,4 +1,4 @@
-var system = angular.module('MegaSchedule', ['ngSanitize'], function ($interpolateProvider) {
+var system = angular.module('MegaSchedule', ['ngSanitize', 'localytics.directives'], function ($interpolateProvider) {
     $interpolateProvider.startSymbol('[{');
     $interpolateProvider.endSymbol('}]');
 });

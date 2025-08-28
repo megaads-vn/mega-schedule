@@ -4,6 +4,7 @@ const axios = require('axios');
 const Env = use('Env');
 const Config = use('Config');
 const User = use('App/Models/User');
+const Common = use('App/Helpers/Common')
 
 class HomeController {
 
@@ -11,7 +12,7 @@ class HomeController {
         this.ssoConfig = Config.get('app.sso');
     }
 
-    index({ response, session, view, request }) {
+    async index({ response, session, view, request }) {
         
         const userToken = session.get('token');
         if (this.ssoConfig.enable == 'true' && (typeof userToken == 'undefined' || !userToken)) {
@@ -30,6 +31,7 @@ class HomeController {
     }
 
     ssoLogin({ response, session, request}) {
+        
         const previousUrl = request.header('Referer');
         const redirectUrl = `${this.ssoConfig.login_url}?continue=${this.ssoConfig.callback_url}`;
         const token = session.get('token');
@@ -70,7 +72,10 @@ class HomeController {
         let fullAuthUrl = `${ssoAuthUrl}?token=${token}&app_id=${appId}&ip=${ip}&user_agent=${userAgent}&domain=${domain}`;
         try {
             const result = await axios.get(fullAuthUrl, {
-                httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false })
+                httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
+                headers: {
+                    'User-Agent': 'SSO-CLIENT/1.0'
+                }
             });
             const res = result.data;
             if (res.status === 'success') {
@@ -97,7 +102,8 @@ class HomeController {
     }
 
     async checkExistsUser(userEmail) {
-        const user = await User.query().where('email', userEmail).where(
+        const user = await User.query()
+            .where('email', userEmail).where(
             'status', 'active'
         ).first();
         return user;

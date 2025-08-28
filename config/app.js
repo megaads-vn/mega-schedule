@@ -217,5 +217,6 @@ module.exports = {
     auth_url: Env.get('SSO_AUTH', ''),
   },
 
-  version: '07042022'
+  // version: '07042022'
+  version: new Date().getTime().toString(),
 }

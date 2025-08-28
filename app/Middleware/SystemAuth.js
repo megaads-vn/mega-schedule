@@ -1,6 +1,8 @@
 'use strict'
 
+
 const Config = use('Config')
+
 class SystemAuth {
   async handle ({ request, response, session }, next) {
     const userToken = session.get('token');
@@ -10,6 +12,7 @@ class SystemAuth {
     } else if (typeof(userToken) == 'undefined' || userToken == '' || userToken == null) {
       return response.route('home');
     }
+    
     await next();
   }
 }
