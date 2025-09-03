@@ -251,7 +251,7 @@ class ScheduleController extends BaseController {
             await this.saveLogging(userId, schedule.id, `schedule_${mode}`, loggingData)
             
             let scheduleObj = schedule.toJSON();
-            if (schedule.active) {
+            if (schedule.status == 'active') {
                 if (mode === 'create') {
                     ScheduleService.create(scheduleObj);        
                 } else {
@@ -311,7 +311,6 @@ class ScheduleController extends BaseController {
         try {
             const oldKeys = Object.keys(newData) // chỉ check các field bạn update
             for (const key of oldKeys) {
-                console.log('key=%s --> OLD= %s --- NEW= %s  -->> %s', key, oldData[key], newData[key], oldData[key] === newData[key]);
                 if (oldData[key] !== newData[key]) {
                     retVal = true;
                     break;
