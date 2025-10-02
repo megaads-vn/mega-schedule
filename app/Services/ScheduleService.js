@@ -60,19 +60,22 @@ class ScheduleService {
             if (scheduleRun.length > 10) {
                 scheduleRun.pop();
             }
-            scheduleRun.unshift({
-                runTime: new Date().getDateTime(),
-                runLink: scheduleInfo.url,
-                method: scheduleInfo.method
-            });
-            var socket = Ws.getChannel('activitySchedule').topic('activitySchedule');
-            if(socket) {
-                socket.broadcast('scheduleRun', scheduleRun);
-            }
-            if (scheduleInfo.ip_request) {
-                self.requestUrlV2(scheduleInfo);
-            } else {
-                self.requestUrl(scheduleInfo);
+            const listUrl = scheduleInfo.url.split('\n');
+            for (const url of listUrl) {
+                scheduleRun.unshift({
+                    runTime: new Date().getDateTime(),
+                    runLink: url,
+                    method: scheduleInfo.method
+                });
+                var socket = Ws.getChannel('activitySchedule').topic('activitySchedule');
+                if(socket) {
+                    socket.broadcast('scheduleRun', scheduleRun);
+                }
+                if (scheduleInfo.ip_request) {
+                    self.requestUrlV2({...scheduleInfo, url: url});
+                } else {
+                    self.requestUrl({...scheduleInfo, url: url});
+                }
             }
         }.bind(null, scheduleInfo));
     }
@@ -98,7 +101,7 @@ class ScheduleService {
         let currentTime = new Date().getDateTime();
         logObj.merge({
             schedule_id: scheduleInfo.id,
-            request: '+ Time: ' + currentTime
+            request: `+ ${scheduleInfo.url}<br />+ ${currentTime}`
         });
         await logObj.save();
 
@@ -153,7 +156,7 @@ class ScheduleService {
         let currentTime = new Date().getDateTime();
         logObj.merge({
             schedule_id: scheduleInfo.id,
-            request: '+ Time: ' + currentTime
+            request: `+ ${scheduleInfo.url}<br />+ ${currentTime}`
         });
         await logObj.save();
         let response = null;

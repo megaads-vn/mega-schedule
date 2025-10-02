@@ -33,6 +33,15 @@
             font-size: 80%;
             padding: 5px 0;
         }
+        .schedule-url {
+            display: inline-block; 
+            max-width: 250px;  
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            font-weight: 500;
+        }
     </style>
 @endsection
 @section('javascript')
@@ -98,7 +107,8 @@
                                         </td>
                                         <td class="vertical-align schedule-info">
                                             <p>Time: [{item.run_at}]</p>
-                                            <p>URL: <a href="[{item.url}]" target="_blank">[{item.url}]</a></p>
+                                            <p>URL:</p>
+                                            <p ng-repeat="url in item.urls"><a class="schedule-url" href="[{url}]" target="_blank" title="[{url}]">[{url}]</a></p>
                                             <p ng-if="item.note">Note: [{item.note}]</p>
                                         </td>
                                         <td class="vertical-align">

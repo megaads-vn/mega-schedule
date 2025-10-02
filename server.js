@@ -19,7 +19,8 @@
 
 
 process.env.TZ = 'Asia/Ho_Chi_Minh';
-global.globalSchedule = {}; global.scheduleRun = [];
+global.globalSchedule = {}; 
+global.scheduleRun = [];
 
 const { Ignitor } = require('@adonisjs/ignitor')
 

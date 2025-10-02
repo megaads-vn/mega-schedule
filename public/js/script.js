@@ -107,7 +107,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         $scope.title = "New Schedule";
         $scope.schedule = {};
         $scope.schedule = angular.copy(defaultValue);
-        $scope.schedule.url = null;
+        $scope.schedule.url = '';
         $scope.schedule.time = null;
         $scope.customBox = false;
         $scope.buildTime();
@@ -123,6 +123,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
             if (response.data.status == "successful") {
                 $scope.schedules = response.data.data.map(function (item) {
                     item.checked = false;
+                    item.urls = item.url.split('\n');
                     return item;
                 });
                 $scope.pagesCount = response.data.pagesCount;
@@ -338,7 +339,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
 
     $scope.viewLog = function (item) {
         $scope.log = angular.copy(item);
-        $scope.log.title = item.run_at + ' - ' + item.url;
+        $scope.log.urls = $scope.log.url.split('\n');
         $scope.log.limit = $scope.limits[0];
         $scope.findLog();
     }
