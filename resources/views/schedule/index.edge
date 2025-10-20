@@ -119,9 +119,6 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="item in schedules track by $index">
-                                        <!-- <td class="vertical-align text-center">
-                                            
-                                        </td> -->
                                         <td class="vertical-align text-center">
                                             <input type="checkbox" ng-model="item.checked" ng-change="changeSelectedState()" />
                                             [{$index + 1}]
@@ -129,7 +126,7 @@
                                         <td class="vertical-align schedule-info">
                                             <p>Time: [{item.run_at}]</p>
                                             <p>URL:</p>
-                                            <p ng-repeat="url in item.urls"><a class="schedule-url" href="[{url}]" target="_blank" title="[{url}]">[{url}]</a></p>
+                                            <p ng-repeat="url in item.urls"><a href="[{url}]" target="_blank" title="[{url}]">[{url}]</a></p>
                                             <p ng-if="item.note">Note: [{item.note}]</p>
                                         </td>
                                         <td class="vertical-align">
