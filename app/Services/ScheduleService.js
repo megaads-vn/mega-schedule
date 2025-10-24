@@ -62,6 +62,9 @@ class ScheduleService {
             }
             const listUrl = scheduleInfo.url.split('\n');
             for (const url of listUrl) {
+                if (!url.trim()) {
+                    continue;
+                }
                 scheduleRun.unshift({
                     runTime: new Date().getDateTime(),
                     runLink: url,
@@ -72,6 +75,7 @@ class ScheduleService {
                     socket.broadcast('scheduleRun', scheduleRun);
                 }
                 if (scheduleInfo.ip_request) {
+
                     self.requestUrlV2({...scheduleInfo, url: url});
                 } else {
                     self.requestUrl({...scheduleInfo, url: url});
@@ -123,6 +127,9 @@ class ScheduleService {
 
             if (responseCode != 200) {
                 EmailService.sendMail(scheduleInfo.id, responseCode, body);
+            }
+            if (requestParams.uri.includes('debug=show_log')) {
+                console.log('url: %s => %s', requestParams.uri, body);
             }
             this.writeLog(logObj, response, body, error);
         });
