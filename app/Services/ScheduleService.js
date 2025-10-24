@@ -128,9 +128,6 @@ class ScheduleService {
             if (responseCode != 200) {
                 EmailService.sendMail(scheduleInfo.id, responseCode, body);
             }
-            if (requestParams.uri.includes('debug=show_log')) {
-                console.log('url: %s => %s', requestParams.uri, body);
-            }
             this.writeLog(logObj, response, body, error);
         });
     }
