@@ -90,8 +90,14 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
     $scope.fetchProject = function () {
         $http.get('/service/project/find', {params: {pageSize: -1}}).then(function (response) {
             if (response.data.status == "successful") {
-                $scope.projects = angular.copy(response.data.data);
-                $scope.projectsForm = angular.copy(response.data.data);
+                const projects = response.data.data.map(function (item) {
+                    return {
+                        id: item.id,
+                        name: item.name + ' ( ID: ' + item.id + ' )'
+                    };
+                });
+                $scope.projects = angular.copy(projects);
+                $scope.projectsForm = angular.copy(projects);
                 $scope.projectsForm.push({
                     id: -1,
                     name: 'New Project...'
