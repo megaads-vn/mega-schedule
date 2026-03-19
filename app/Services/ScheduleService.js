@@ -9,6 +9,16 @@ const Ws = use('Ws');
 const axios = require('axios');
 const https = require('https');
 
+// Shared https.Agent - reuse across all requests to prevent memory leak
+// Previously, a new Agent was created per request, leaking TLS sockets and buffers
+const sharedHttpsAgent = new https.Agent({
+    rejectUnauthorized: false,
+    keepAlive: false,
+    maxSockets: 50
+});
+
+const MAX_SCHEDULE_RUN_ITEMS = 50;
+
 class ScheduleService {
 
     async run() {
@@ -57,8 +67,9 @@ class ScheduleService {
         var runAt = scheduleInfo.run_at.trim().replace(/\s\s+/g, ' ');
         globalSchedule[scheduleInfo.id] = scheduleInfo;
         globalSchedule[scheduleInfo.id] = schedule.scheduleJob(runAt, function (scheduleInfo) {
-            if (scheduleRun.length > 10) {
-                scheduleRun.pop();
+            // Cap scheduleRun to prevent unbounded memory growth
+            if (scheduleRun.length >= MAX_SCHEDULE_RUN_ITEMS) {
+                scheduleRun.splice(MAX_SCHEDULE_RUN_ITEMS - 1);
             }
             const listUrl = scheduleInfo.url.split('\n');
             for (const url of listUrl) {
@@ -94,7 +105,7 @@ class ScheduleService {
             },
             rejectUnauthorized: false,
             maxRedirects: 5,
-            timeout: 10 * 60 * 1000
+            timeout: 2 * 60 * 1000 // Reduced from 10min to 2min to free sockets faster
         };
         if (['POST', 'PUT', 'PATCH'].indexOf(scheduleInfo.method) > -1 && scheduleInfo.body) {
             requestParams.json = true;
@@ -136,21 +147,17 @@ class ScheduleService {
         const url = new URL(scheduleInfo.url);
         let requestParams = {
             method: scheduleInfo.method || 'GET',
-            url: scheduleInfo.url,
+            url: `https://${scheduleInfo.ip_request}${url.pathname}${url.search}`,
             headers: {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 (MegaAds - Schedule)",
                 "Cache-Control": "no-cache, no-store, must-revalidate",
                 "Content-Type": "application/json",
                 "Host": url.hostname
             },
-            httpsAgent: new https.Agent({
-                rejectUnauthorized: false,
-                host: scheduleInfo.ip_request,
-                port: 443,
-                path: '/'
-            }),
+            // Reuse shared agent instead of creating new one per request (was leaking memory)
+            httpsAgent: sharedHttpsAgent,
             maxRedirects: 5,
-            timeout: 10 * 60 * 1000
+            timeout: 2 * 60 * 1000 // Reduced from 10min to 2min to free memory faster
         };
         if (['POST', 'PUT', 'PATCH'].indexOf(scheduleInfo.method) > -1 && scheduleInfo.body) {
             requestParams.data = scheduleInfo.body;
@@ -245,7 +252,7 @@ class ScheduleService {
         if (response && response.status) {
             content.push('+ Status: ' + response.status);
             let contentTypes = [];
-            if (response.headers['content-type']) {
+            if (response.headers && response.headers['content-type']) {
                 contentTypes = response.headers['content-type'].split(';');
             }
             if (contentTypes.indexOf('application/json') > -1) {
@@ -262,6 +269,11 @@ class ScheduleService {
 
         logObj.response = content.join('<br />');
         logObj.save();
+
+        // Release references to allow GC to reclaim memory
+        response = null;
+        body = null;
+        err = null;
     }
 
 }

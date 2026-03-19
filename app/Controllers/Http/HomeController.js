@@ -1,10 +1,14 @@
 'use strict'
 
 const axios = require('axios');
+const https = require('https');
 const Env = use('Env');
 const Config = use('Config');
 const User = use('App/Models/User');
-const Common = use('App/Helpers/Common')
+const Common = use('App/Helpers/Common');
+
+// Shared https.Agent to prevent memory leak from creating new agent per SSO request
+const sharedHttpsAgent = new https.Agent({ rejectUnauthorized: false, keepAlive: false });
 
 class HomeController {
 
@@ -71,7 +75,7 @@ class HomeController {
         let fullAuthUrl = `${ssoAuthUrl}?token=${token}&app_id=${appId}&ip=${ip}&user_agent=${userAgent}&domain=${domain}`;
         try {
             const result = await axios.get(fullAuthUrl, {
-                httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
+                httpsAgent: sharedHttpsAgent,
                 headers: {
                     'User-Agent': 'SSO-CLIENT/1.0'
                 }
