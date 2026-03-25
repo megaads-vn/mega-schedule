@@ -76,7 +76,9 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         months: STAR,
         weekday: STAR,
         status: $scope.statuses[0].code,
-        method: $scope.methods[0].code
+        method: $scope.methods[0].code,
+        alert_enabled: false,
+        expected_status: ''
     };
     $scope.schedule = defaultValue;
     $scope.customBox = false;
@@ -293,14 +295,18 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
 
     $scope.buildData = function () {
         var retVal = {};
-        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status', 'method', 'body', 'ip_request'];
+        var fillable = ['id', 'url', 'note', 'project_id', 'emails', 'status', 'method', 'body', 'ip_request', 'alert_enabled', 'expected_status'];
 
         if (!$scope.schedule.url || $scope.schedule.url == '') {
             showMessage('Error', 'URL required. Please check again...', 'error', 'glyphicon-remove');
             return false;
         }
 
-        if ($scope.schedule.emails && $scope.schedule.emails != '') {
+        if ($scope.schedule.alert_enabled) {
+            if (!$scope.schedule.emails || $scope.schedule.emails == '') {
+                showMessage('Error', 'Email is required when alert is enabled. Please check again...', 'error', 'glyphicon-remove');
+                return false;
+            }
             var emails = $scope.schedule.emails.split(',').map(function (item) { return item.trim() });
             var invalidEmail = false;
             for (var k in emails) {
@@ -420,6 +426,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
             $scope.schedule.seconds = times.pop();
         }
         $scope.customBox = (item.custom_time === "yes") ? true : false;
+        $scope.schedule.alert_enabled = (item.alert_enabled == 1) ? true : false;
         $scope.title = title;
         $scope.showDescriptions($scope.schedule.time);
         $timeout(function () {

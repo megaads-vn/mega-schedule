@@ -36,7 +36,7 @@ class ScheduleController extends BaseController {
         } else {
             var query = this.buildFilterData(Schedule.query(), request);
             var queryCount = this.buildFilterData(Schedule.query(), request);
-            queryCount = await queryCount.count('* as recordsCount');
+            queryCount = await queryCount.clearSelect().count('* as recordsCount');
             var recordsCount = (typeof (queryCount[0]['recordsCount']) != 'undefined') ? queryCount[0]['recordsCount'] : 0;
             var schedules = await query.forPage(pageId + 1, pageSize).orderBy('s.id', 'desc').fetch();
         }
@@ -220,6 +220,12 @@ class ScheduleController extends BaseController {
             }
             if (typeof data.ip_request != "undefined") {
                 schedule.ip_request = data.ip_request;
+            }
+            if (typeof data.alert_enabled != "undefined") {
+                schedule.alert_enabled = data.alert_enabled ? 1 : 0;
+            }
+            if (typeof data.expected_status != "undefined") {
+                schedule.expected_status = data.expected_status;
             }
         }
         return schedule;

@@ -53,7 +53,7 @@ class ScheduleService {
     }
 
     update(scheduleInfo) {
-        if(typeof(scheduleInfo.id) != "undefined" && typeof(globalSchedule[scheduleInfo.id]) != 'undefined') {
+        if (typeof (scheduleInfo.id) != "undefined" && typeof (globalSchedule[scheduleInfo.id]) != 'undefined') {
             try {
                 globalSchedule[scheduleInfo.id].cancel();
             } catch (error) { }
@@ -82,14 +82,14 @@ class ScheduleService {
                     method: scheduleInfo.method
                 });
                 var socket = Ws.getChannel('activitySchedule').topic('activitySchedule');
-                if(socket) {
+                if (socket) {
                     socket.broadcast('scheduleRun', scheduleRun);
                 }
                 if (scheduleInfo.ip_request) {
 
-                    self.requestUrlV2({...scheduleInfo, url: url});
+                    self.requestUrlV2({ ...scheduleInfo, url: url });
                 } else {
-                    self.requestUrl({...scheduleInfo, url: url});
+                    self.requestUrl({ ...scheduleInfo, url: url });
                 }
             }
         }.bind(null, scheduleInfo));
@@ -125,20 +125,24 @@ class ScheduleService {
             if (response && response.statusCode) {
                 responseCode = response.statusCode;
             }
-            if (error) {
-                EmailService.sendMail(scheduleInfo.id, responseCode, error);
-            }
 
-            try {
-                var parseResult = JSON.parse(body);
-                if (parseResult.status && ['fail', 'failed', 'error'].indexOf(parseResult.status) > -1) {
-                    EmailService.sendMail(scheduleInfo.id, responseCode, body);
+            if (scheduleInfo.alert_enabled == 1) {
+                if (error) {
+                    EmailService.sendMail(scheduleInfo, responseCode, error);
+                } else if (responseCode >= 400) {
+                    EmailService.sendMail(scheduleInfo, responseCode, body);
+                } else {
+                    try {
+                        var parseResult = typeof body === 'object' ? body : JSON.parse(body);
+                        if (scheduleInfo.expected_status && parseResult.status && parseResult.status != scheduleInfo.expected_status) {
+                            EmailService.sendMail(scheduleInfo, responseCode, body);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
                 }
-            } catch(err) {}
-
-            if (responseCode != 200) {
-                EmailService.sendMail(scheduleInfo.id, responseCode, body);
             }
+
             this.writeLog(logObj, response, body, error);
         });
     }
@@ -180,12 +184,13 @@ class ScheduleService {
                 responseCode = response.status;
             }
             body = response.data;
-            if (body.status && ['fail', 'failed', 'error'].indexOf(body.status) > -1) {
-                EmailService.sendMail(scheduleInfo.id, responseCode, body);
-            }
 
-            if (responseCode != 200) {
-                EmailService.sendMail(scheduleInfo.id, responseCode, body);
+            if (scheduleInfo.alert_enabled == 1) {
+                if (responseCode >= 400) {
+                    EmailService.sendMail(scheduleInfo, responseCode, body);
+                } else if (scheduleInfo.expected_status && body.status && body.status != scheduleInfo.expected_status) {
+                    EmailService.sendMail(scheduleInfo, responseCode, body);
+                }
             }
 
         } catch (exception) {
@@ -200,7 +205,9 @@ class ScheduleService {
                 responseCode = 400;
                 error = body;
             }
-            EmailService.sendMail(scheduleInfo.id, responseCode, body);
+            if (scheduleInfo.alert_enabled == 1) {
+                EmailService.sendMail(scheduleInfo, responseCode, body);
+            }
         }
         this.writeLogV2(logObj, response, body, error);
     }

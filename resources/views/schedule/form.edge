@@ -36,8 +36,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Notification</label>
-                        <input type="text" ng-model="schedule.emails" class="form-control" placeholder="Enter multiple emails separated by commas" />
+                        <label><input type="checkbox" ng-model="schedule.alert_enabled" /> Enable Alert</label>
+                    </div>
+                    <div ng-show="schedule.alert_enabled">
+                        <div class="form-group">
+                            <label>Notification Emails</label>
+                            <input type="text" ng-model="schedule.emails" class="form-control" placeholder="Enter multiple emails separated by commas" />
+                        </div>
+                        <div class="form-group">
+                            <label>Expected Status Value</label>
+                            <input type="text" ng-model="schedule.expected_status" class="form-control" placeholder="e.g. successful, ok, success" />
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Note</label>
