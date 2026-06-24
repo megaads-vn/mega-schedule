@@ -128,6 +128,12 @@
                                             <p>URL:</p>
                                             <p ng-repeat="url in item.urls"><a href="[{url}]" target="_blank" title="[{url}]">[{url}]</a></p>
                                             <p ng-if="item.note">Note: [{item.note}]</p>
+                                            <p ng-if="item.error_count > 0">
+                                                <span class="label label-danger" title="Failed runs in the last [{stats.window_hours}]h">
+                                                    <span class="glyphicon glyphicon-alert"></span>
+                                                    [{item.error_count}] error(s) / [{stats.window_hours}]h
+                                                </span>
+                                            </p>
                                         </td>
                                         <td class="vertical-align">
                                             [{ getByField(statuses, 'code', item.status).name }]
@@ -177,6 +183,45 @@
             </div>
 
             <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <div class="panel" ng-class="stats.total_errors > 0 ? 'panel-danger' : 'panel-default'">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            <span class="title-store">&nbsp;Failed Tasks ([{stats.window_hours}]h)</span>
+                        </h3>
+                        <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row text-center">
+                            <div class="col-xs-6">
+                                <h2 style="margin: 5px 0" ng-class="stats.total_errors > 0 ? 'text-danger' : 'text-muted'">[{stats.total_errors || 0}]</h2>
+                                <small>Error runs</small>
+                            </div>
+                            <div class="col-xs-6">
+                                <h2 style="margin: 5px 0" ng-class="stats.failing_schedules > 0 ? 'text-danger' : 'text-muted'">[{stats.failing_schedules || 0}]</h2>
+                                <small>Failing tasks</small>
+                            </div>
+                        </div>
+                        <p class="text-center text-success" style="margin-top: 10px" ng-if="stats.total_errors == 0">
+                            <span class="glyphicon glyphicon-ok-sign"></span> No failed tasks
+                        </p>
+                        <div ng-if="stats.failed_links.length > 0" style="margin-top: 10px">
+                            <hr style="margin: 8px 0" />
+                            <strong style="font-size: 12px">Failed links</strong>
+                            <ul class="list-unstyled" style="margin-top: 6px; margin-bottom: 0">
+                                <li ng-repeat="link in stats.failed_links" style="margin-bottom: 8px">
+                                    <span class="badge" style="background-color: #d9534f" title="Số lần chạy lỗi">[{link.error_count}]</span>
+                                    <span class="label label-default" ng-if="link.last_status_code">[{link.last_status_code}]</span>
+                                    <a href="[{link.url}]" target="_blank" title="[{link.url}]"
+                                       style="display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; word-break: break-all;">[{link.url}]</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-xs btn-default btn-block" style="margin-top: 10px" ng-click="fetchStats()">
+                            <span class="glyphicon glyphicon-refresh"></span> Refresh
+                        </button>
+                    </div>
+                </div>
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">

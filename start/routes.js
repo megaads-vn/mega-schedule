@@ -27,6 +27,7 @@ Route.post('/service/upload', 'FileController.upload');
 
 Route.group(() => {
     Route.get('schedule/find', 'ScheduleController.find').as('findSchedule');
+    Route.get('schedule/stats', 'ScheduleController.stats').as('statsSchedule');
     Route.post('schedule/create', 'ScheduleController.create').as('createSchedule');
     Route.patch('schedule/update/:id', 'ScheduleController.update').as('updateSchedule');
     Route.post('schedule/change-status', 'ScheduleController.changeStatus').as('changeStatusSchedule');

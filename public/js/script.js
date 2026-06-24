@@ -83,10 +83,37 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
     $scope.schedule = defaultValue;
     $scope.customBox = false;
 
+    $scope.stats = {
+        window_hours: 24,
+        total_errors: 0,
+        failing_schedules: 0,
+        errors_by_schedule: {},
+        failed_links: []
+    };
+
     $scope.init = async function () {
         $scope.scheduleActionStatus = $scope.scheduleActionStatuses[0];
         $scope.fetchProject();
         $scope.find();
+        $scope.fetchStats();
+    }
+
+    // Pull failed-run statistics (last 24h) for the dashboard panel and badges.
+    $scope.fetchStats = function () {
+        $http.get('/service/schedule/stats').then(function (response) {
+            if (response.data.status == "successful") {
+                $scope.stats = response.data.data;
+                $scope.applyErrorCounts();
+            }
+        });
+    }
+
+    // Map error counts onto the currently listed schedules for the per-row badge.
+    $scope.applyErrorCounts = function () {
+        var errors = ($scope.stats && $scope.stats.errors_by_schedule) || {};
+        angular.forEach($scope.schedules, function (item) {
+            item.error_count = errors[item.id] || 0;
+        });
     }
 
     $scope.fetchProject = function () {
@@ -135,6 +162,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
                     return item;
                 });
                 $scope.pagesCount = response.data.pagesCount;
+                $scope.applyErrorCounts();
             } else {
                 $scope.schedules = [];
                 $scope.pagesCount = 0;
@@ -191,6 +219,7 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
             $http.get('/service/schedule/run/' + item.id).then(function (response) {
                 showMessage('Success!', 'Sending...', 'success', 'glyphicon-remove');
                 $('.loading').hide();
+                $scope.fetchStats();
             }, function (error) {
                 $('.loading').hide();
                 showMessage('Error', 'An error occurred during data transfer. Please try again...', 'error', 'glyphicon-remove');

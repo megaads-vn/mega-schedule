@@ -6,6 +6,7 @@ const BaseController = use('App/Controllers/Http/BaseController');
 const ScheduleService = use('App/Services/ScheduleService');
 const Common = use('App/Helpers/Common');
 const Logging = use('App/Models/Logging');
+const Database = use('Database');
 
 class ScheduleController extends BaseController {
     
@@ -45,6 +46,72 @@ class ScheduleController extends BaseController {
         result.pagesCount = this.recordsCountToPagesCount(recordsCount, pageSize);
 
         response.json(result);
+    }
+
+    // Statistics of failed runs within a recent time window. Drives the dashboard
+    // panel and the per-schedule error badges on the list page.
+    async stats({ request, response }) {
+        let result = this.getDefaultStatus();
+        let statusCode = 200;
+        try {
+            let hours = parseInt(request.input('hours', 24));
+            if (isNaN(hours) || hours <= 0) {
+                hours = 24;
+            }
+            const since = this.formatDateTime(new Date(Date.now() - hours * 60 * 60 * 1000));
+
+            const rows = await Database.table('log_schedule')
+                .where('is_error', 1)
+                .where('created_at', '>=', since)
+                .select('schedule_id')
+                .count('* as cnt')
+                .groupBy('schedule_id');
+
+            let errorsBySchedule = {};
+            let totalErrors = 0;
+            rows.forEach((row) => {
+                const count = parseInt(row.cnt) || 0;
+                errorsBySchedule[row.schedule_id] = count;
+                totalErrors += count;
+            });
+
+            // Failed links ranked by how many times each one failed in the window.
+            const linkRows = await Database.table('log_schedule')
+                .where('is_error', 1)
+                .where('created_at', '>=', since)
+                .whereNotNull('url')
+                .where('url', '!=', '')
+                .select('url')
+                .max('schedule_id as schedule_id')
+                .max('status_code as last_status_code')
+                .count('* as cnt')
+                .groupBy('url')
+                .orderBy('cnt', 'desc')
+                .limit(100);
+
+            const failedLinks = linkRows.map((row) => {
+                return {
+                    url: row.url,
+                    schedule_id: row.schedule_id,
+                    last_status_code: row.last_status_code,
+                    error_count: parseInt(row.cnt) || 0
+                };
+            });
+
+            result = this.getSuccessStatus();
+            result.data = {
+                window_hours: hours,
+                total_errors: totalErrors,
+                failing_schedules: rows.length,
+                errors_by_schedule: errorsBySchedule,
+                failed_links: failedLinks
+            };
+        } catch (err) {
+            console.error('SCHEDULE_STATS_ERROR:', err.message);
+            result.message = 'Has error when building statistics';
+            statusCode = 500;
+        }
+        return response.status(statusCode).json(result);
     }
 
     async create({ request, response, session }) {
@@ -296,6 +363,15 @@ class ScheduleController extends BaseController {
 
     range(start, end) {
         return Array.from({length: (end - start)}, (v, k) => k + start);
+    }
+
+    // Format a Date as 'YYYY-MM-DD HH:mm:ss' to match how log_schedule.created_at
+    // is stored, so range comparisons work. (The global Date#getDateTime helper
+    // always returns the current time, so it can't be used for an arbitrary date.)
+    formatDateTime(date) {
+        const pad = (n) => (n < 10 ? '0' : '') + n;
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} `
+            + `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
     }
 
     async saveLogging(userId, targetId, action, data) {

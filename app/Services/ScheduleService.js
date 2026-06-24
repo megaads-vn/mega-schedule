@@ -116,6 +116,7 @@ class ScheduleService {
         let currentTime = new Date().getDateTime();
         logObj.merge({
             schedule_id: scheduleInfo.id,
+            url: scheduleInfo.url,
             request: `+ ${scheduleInfo.url}<br />+ ${currentTime}`
         });
         await logObj.save();
@@ -171,6 +172,7 @@ class ScheduleService {
         let currentTime = new Date().getDateTime();
         logObj.merge({
             schedule_id: scheduleInfo.id,
+            url: scheduleInfo.url,
             request: `+ ${scheduleInfo.url}<br />+ ${currentTime}`
         });
         await logObj.save();
@@ -230,6 +232,10 @@ class ScheduleService {
         let currentTime = new Date().getDateTime();
         let content = ['+ Time: ' + currentTime];
 
+        let statusCode = (response && response.statusCode) ? response.statusCode : null;
+        logObj.status_code = statusCode;
+        logObj.is_error = (err || (statusCode && statusCode >= 400)) ? 1 : 0;
+
         if (response && response.statusCode) {
             content.push('+ Status: ' + response.statusCode);
             let contentTypes = [];
@@ -255,6 +261,10 @@ class ScheduleService {
     writeLogV2(logObj, response, body, err) {
         let currentTime = new Date().getDateTime();
         let content = ['+ Time: ' + currentTime];
+
+        let statusCode = (response && response.status) ? response.status : null;
+        logObj.status_code = statusCode;
+        logObj.is_error = (err || (statusCode && statusCode >= 400)) ? 1 : 0;
 
         if (response && response.status) {
             content.push('+ Status: ' + response.status);

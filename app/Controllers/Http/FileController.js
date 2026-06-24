@@ -4,10 +4,18 @@ const ExcelJS = require('exceljs');
 const Helpers = use('Helpers');
 const ScheduleService = use('App/Services/ScheduleService');
 const Schedule = use('App/Models/Schedule');
+const Common = use('App/Helpers/Common');
 
 class FileController {
-    async upload({ request, response }) {
+    async upload({ request, response, session }) {
         let result = {};
+        // Resolve the importing user so each created schedule keeps its creator,
+        // same as a manual create via ScheduleController.
+        let createdBy = null;
+        const user = await Common.findUserByToken(session.get('token'));
+        if (user) {
+            createdBy = user.id;
+        }
         const excelFile = request.file('file', {
             types: ['xlsx', 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
             size: '10mb'
@@ -51,6 +59,9 @@ class FileController {
                     schedule.body = item["6"];
                     schedule.status = item["7"];
                     schedule.ip_request = item["8"];
+                    if (createdBy !== null) {
+                        schedule.created_by = createdBy;
+                    }
                     if (schedule.url !== null && schedule.url !== '' && schedule.run_at !== null && schedule.run_at !== '') {
                         let status = schedule.save();
                         status.then(function () {
