@@ -6,15 +6,26 @@ const EmailService = use('App/Services/EmailService');
 const schedule = require('node-schedule');
 const request = require('request');
 const Ws = use('Ws');
+const Env = use('Env');
 const axios = require('axios');
 const https = require('https');
 
+// Tunables (override via .env). Keep defaults conservative so we don't flood
+// a shared backend: keepAlive reuses connections (the real ETIMEDOUT fix),
+// while maxSockets caps concurrency PER HOST to avoid overloading the target.
+const REQUEST_TIMEOUT = parseInt(Env.get('SCHEDULE_REQUEST_TIMEOUT', 300000), 10); // 5min overall request timeout
+const MAX_SOCKETS = parseInt(Env.get('SCHEDULE_MAX_SOCKETS', 100), 10);            // concurrent connections per host
+
 // Shared https.Agent - reuse across all requests to prevent memory leak
-// Previously, a new Agent was created per request, leaking TLS sockets and buffers
+// Previously, a new Agent was created per request, leaking TLS sockets and buffers.
+// keepAlive:true reuses sockets instead of doing a fresh TCP+TLS handshake per
+// request, which is what was causing the ETIMEDOUT storms after the previous deploy.
 const sharedHttpsAgent = new https.Agent({
     rejectUnauthorized: false,
-    keepAlive: false,
-    maxSockets: 50
+    keepAlive: true,
+    keepAliveMsecs: 30000,
+    maxSockets: MAX_SOCKETS,
+    maxFreeSockets: 20
 });
 
 const MAX_SCHEDULE_RUN_ITEMS = 50;
@@ -105,7 +116,7 @@ class ScheduleService {
             },
             rejectUnauthorized: false,
             maxRedirects: 5,
-            timeout: 2 * 60 * 1000 // Reduced from 10min to 2min to free sockets faster
+            timeout: REQUEST_TIMEOUT // configurable via SCHEDULE_REQUEST_TIMEOUT
         };
         if (['POST', 'PUT', 'PATCH'].indexOf(scheduleInfo.method) > -1 && scheduleInfo.body) {
             requestParams.json = true;
@@ -162,7 +173,7 @@ class ScheduleService {
             // Reuse shared agent instead of creating new one per request (was leaking memory)
             httpsAgent: sharedHttpsAgent,
             maxRedirects: 5,
-            timeout: 2 * 60 * 1000 // Reduced from 10min to 2min to free memory faster
+            timeout: REQUEST_TIMEOUT // configurable via SCHEDULE_REQUEST_TIMEOUT
         };
         if (['POST', 'PUT', 'PATCH'].indexOf(scheduleInfo.method) > -1 && scheduleInfo.body) {
             requestParams.data = scheduleInfo.body;
