@@ -116,6 +116,11 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         });
     }
 
+    // Open the popup listing every failed link (the panel only shows the top 5).
+    $scope.showFailedLinks = function () {
+        $('#failedLinksModal').modal('show');
+    }
+
     $scope.fetchProject = function () {
         $http.get('/service/project/find', {params: {pageSize: -1}}).then(function (response) {
             if (response.data.status == "successful") {

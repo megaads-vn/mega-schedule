@@ -208,18 +208,59 @@
                         <div ng-if="stats.failed_links.length > 0" style="margin-top: 10px">
                             <hr style="margin: 8px 0" />
                             <strong style="font-size: 12px">Failed links</strong>
-                            <ul class="list-unstyled" style="margin-top: 6px; margin-bottom: 0">
-                                <li ng-repeat="link in stats.failed_links" style="margin-bottom: 8px">
+                            <ul class="list-unstyled" style="margin-top: 6px; margin-bottom: 0; max-height: 220px; overflow-y: auto">
+                                <li ng-repeat="link in stats.failed_links | limitTo:5" style="margin-bottom: 8px">
                                     <span class="badge" style="background-color: #d9534f" title="Số lần chạy lỗi">[{link.error_count}]</span>
                                     <span class="label label-default" ng-if="link.last_status_code">[{link.last_status_code}]</span>
                                     <a href="[{link.url}]" target="_blank" title="[{link.url}]"
                                        style="display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; word-break: break-all;">[{link.url}]</a>
                                 </li>
                             </ul>
+                            <button type="button" class="btn btn-xs btn-link btn-block" style="margin-top: 2px; padding: 2px"
+                                    ng-if="stats.failed_links.length > 5" ng-click="showFailedLinks()">
+                                Xem thêm [{stats.failed_links.length - 5}] link
+                                <span class="glyphicon glyphicon-chevron-down"></span>
+                            </button>
                         </div>
                         <button type="button" class="btn btn-xs btn-default btn-block" style="margin-top: 10px" ng-click="fetchStats()">
                             <span class="glyphicon glyphicon-refresh"></span> Refresh
                         </button>
+                    </div>
+                </div>
+
+                <!-- Popup: full list of failed links (scrollable) -->
+                <div class="modal fade" id="failedLinksModal" tabindex="-1" role="dialog" aria-labelledby="failedLinksModalLabel">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="failedLinksModalLabel">
+                                    <span class="glyphicon glyphicon-warning-sign text-danger"></span>
+                                    Failed links ([{stats.failed_links.length}]) &mdash; [{stats.window_hours}]h
+                                </h4>
+                            </div>
+                            <div class="modal-body" style="max-height: 70vh; overflow-y: auto">
+                                <table class="table table-striped table-condensed" style="margin-bottom: 0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 70px">Errors</th>
+                                            <th style="width: 80px">Status</th>
+                                            <th>URL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="link in stats.failed_links">
+                                            <td><span class="badge" style="background-color: #d9534f">[{link.error_count}]</span></td>
+                                            <td><span class="label label-default" ng-if="link.last_status_code">[{link.last_status_code}]</span></td>
+                                            <td style="word-break: break-all"><a href="[{link.url}]" target="_blank" title="[{link.url}]">[{link.url}]</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel panel-success">
