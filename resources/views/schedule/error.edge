@@ -1,0 +1,55 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="formError">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-alert text-danger"></span>
+                    Error details
+                    <small ng-if="errorLog.run_at">&mdash; Time: [{errorLog.run_at}]</small>
+                </h4>
+            </div>
+            <div class="modal-body" style="max-height: 75vh; overflow-y: auto">
+                <p class="text-muted" style="margin-bottom: 10px">
+                    <span class="glyphicon glyphicon-time"></span>
+                    Showing failed runs in the last [{errorLog.window_hours}]h
+                    &mdash; <strong>[{errorLogs.length}]</strong> error(s)
+                </p>
+
+                <div class="panel panel-danger" ng-repeat="log in errorLogs track by $index" style="margin-bottom: 12px">
+                    <div class="panel-heading" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px">
+                        <span class="badge" style="background-color: #d9534f">#[{$index + 1}]</span>
+                        <span class="label label-danger" ng-if="log.status_code">HTTP [{log.status_code}]</span>
+                        <span class="label label-warning" ng-if="!log.status_code">No response</span>
+                        <span style="margin-left: auto; font-size: 12px">
+                            <span class="glyphicon glyphicon-time"></span> [{log.created_at}]
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <p style="margin-bottom: 6px" ng-if="log.url">
+                            <strong>URL:</strong>
+                            <a href="[{log.url}]" target="_blank" title="[{log.url}]" style="word-break: break-all">[{log.url}]</a>
+                        </p>
+                        <p style="margin-bottom: 4px"><strong>Request:</strong></p>
+                        <div class="well well-sm f-s-12" style="margin-bottom: 8px; word-break: break-all"
+                             ng-bind-html="log.request"></div>
+                        <p style="margin-bottom: 4px"><strong>Response / Error:</strong></p>
+                        <div class="well well-sm f-s-12" style="margin-bottom: 0; word-break: break-all; white-space: pre-wrap"
+                             ng-bind-html="log.response"></div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success" ng-if="errorLogs.length == 0">
+                    <span class="glyphicon glyphicon-ok-sign"></span>
+                    No error logs found in this window.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="viewLog(errorLog)" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-list-alt"></span> View all logs
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

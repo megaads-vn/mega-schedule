@@ -221,6 +221,32 @@ class ScheduleController extends BaseController {
         response.json(result);
     }
 
+    // Only the failed runs for a schedule, newest first. Powers the "error(s) / Xh"
+    // badge popup so the user can read the cause without digging through all logs.
+    async errors({ params, request, response }) {
+        let result = this.getDefaultStatus();
+        if (params.id && params.id != '') {
+            let hours = parseInt(request.input('hours', 24));
+            if (isNaN(hours) || hours <= 0) {
+                hours = 24;
+            }
+            const since = this.formatDateTime(new Date(Date.now() - hours * 60 * 60 * 1000));
+
+            const logs = await LogSchedule.query()
+                .where('schedule_id', params.id)
+                .where('is_error', 1)
+                .where('created_at', '>=', since)
+                .orderBy('id', 'desc')
+                .limit(parseInt(request.input('limit', 50)))
+                .fetch();
+
+            result = this.getSuccessStatus();
+            result.data = logs;
+            result.window_hours = hours;
+        }
+        response.json(result);
+    }
+
     async changeStatus({ request, response }) {
         let result = this.getDefaultStatus();
         let statusCode = 200;

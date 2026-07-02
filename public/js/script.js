@@ -383,6 +383,33 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         return retVal;
     }
 
+    // Open a popup with only the failed runs for this schedule so the cause is
+    // easy to read (status code, request, response/error) without scanning all logs.
+    $scope.viewErrors = function (item) {
+        $scope.errorLog = angular.copy(item);
+        $scope.errorLog.urls = $scope.errorLog.url ? $scope.errorLog.url.split('\n') : [];
+        $scope.errorLog.window_hours = ($scope.stats && $scope.stats.window_hours) || 24;
+        $scope.errorLogs = [];
+        $('.loading').show();
+        $http.get('/service/schedule/errors/' + item.id, { params: { hours: $scope.errorLog.window_hours, limit: 50 } })
+            .then(function (response) {
+                if (response.data.status == "successful") {
+                    $scope.errorLogs = response.data.data;
+                    if (response.data.window_hours) {
+                        $scope.errorLog.window_hours = response.data.window_hours;
+                    }
+                } else {
+                    $scope.errorLogs = [];
+                }
+                $('.loading').hide();
+                $('#formError').modal('show');
+            }, function () {
+                $('.loading').hide();
+                $scope.errorLogs = [];
+                $('#formError').modal('show');
+            });
+    }
+
     $scope.viewLog = function (item) {
         $scope.log = angular.copy(item);
         $scope.log.urls = $scope.log.url.split('\n');

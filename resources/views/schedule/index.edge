@@ -129,9 +129,12 @@
                                             <p ng-repeat="url in item.urls"><a href="[{url}]" target="_blank" title="[{url}]">[{url}]</a></p>
                                             <p ng-if="item.note">Note: [{item.note}]</p>
                                             <p ng-if="item.error_count > 0">
-                                                <span class="label label-danger" title="Failed runs in the last [{stats.window_hours}]h">
+                                                <span class="label label-danger clickable" style="cursor: pointer"
+                                                      ng-click="viewErrors(item)"
+                                                      title="Click để xem chi tiết lỗi (last [{stats.window_hours}]h)">
                                                     <span class="glyphicon glyphicon-alert"></span>
                                                     [{item.error_count}] error(s) / [{stats.window_hours}]h
+                                                    <span class="glyphicon glyphicon-search"></span>
                                                 </span>
                                             </p>
                                         </td>
@@ -287,6 +290,7 @@
         </div>
         @include('schedule.form')
         @include('schedule.log')
+        @include('schedule.error')
         @include('project.form')
     </div>
 
