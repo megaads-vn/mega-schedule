@@ -195,6 +195,10 @@
                         <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                     </div>
                     <div class="panel-body">
+                        <div class="btn-group btn-group-xs btn-group-justified" role="group" style="margin-bottom: 10px">
+                            <a class="btn" ng-class="statsWindow == 7 ? 'btn-danger' : 'btn-default'" ng-click="setStatsWindow(7)">7h</a>
+                            <a class="btn" ng-class="statsWindow == 24 ? 'btn-danger' : 'btn-default'" ng-click="setStatsWindow(24)">24h</a>
+                        </div>
                         <div class="row text-center">
                             <div class="col-xs-6">
                                 <h2 style="margin: 5px 0" ng-class="stats.total_errors > 0 ? 'text-danger' : 'text-muted'">[{stats.total_errors || 0}]</h2>

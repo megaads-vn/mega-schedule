@@ -98,14 +98,26 @@ system.controller('ScheduleController', function ($scope, $timeout, $http, Uploa
         $scope.fetchStats();
     }
 
-    // Pull failed-run statistics (last 24h) for the dashboard panel and badges.
+    // Currently selected time window (in hours) for the Failed Tasks panel.
+    $scope.statsWindow = 24;
+
+    // Pull failed-run statistics for the dashboard panel and badges.
     $scope.fetchStats = function () {
-        $http.get('/service/schedule/stats').then(function (response) {
+        $http.get('/service/schedule/stats', { params: { hours: $scope.statsWindow } }).then(function (response) {
             if (response.data.status == "successful") {
                 $scope.stats = response.data.data;
                 $scope.applyErrorCounts();
             }
         });
+    }
+
+    // Switch the Failed Tasks window (e.g. 7h / 24h) and reload stats.
+    $scope.setStatsWindow = function (hours) {
+        if ($scope.statsWindow === hours) {
+            return;
+        }
+        $scope.statsWindow = hours;
+        $scope.fetchStats();
     }
 
     // Map error counts onto the currently listed schedules for the per-row badge.
